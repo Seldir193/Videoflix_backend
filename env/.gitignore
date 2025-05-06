@@ -1,0 +1,16 @@
+# Python virtualenvs
+env/
+venv/
+.env/
+
+# Bytecode
+__pycache__/
+*.py[cod]
+
+# Logs
+*.log
+
+# Django stuff:
+*.sqlite3
+/media/
+staticfiles/
