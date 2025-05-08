@@ -1,0 +1,24 @@
+cat > .gitignore <<'EOF'
+# --- Python / Django -----------------
+__pycache__/
+*.py[cod]
+*.sqlite3
+
+# Virtual Environments
+env/
+.venv/
+env_win_backup/
+
+# --- Node / Angular ------------------
+node_modules/
+dist/
+.angular/
+
+# --- Editor / OS ---------------------
+.vscode/
+*.swp
+.DS_Store
+
+# --- Secrets / Environment -----------
+.env
+EOF
