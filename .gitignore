@@ -1,22 +1,38 @@
-# --- Python / Django --- 
-__pycache__/ 
-*.py[cod] 
+
+
+
+
+
+
+
+
+# ------------------------------------------------------------------
+# Python / Django
+# ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
 *.sqlite3
-ECHO ist eingeschaltet (ON).
-# Virtual Environments 
-env/ 
-.venv/ 
-env_win_backup/ 
-ECHO ist eingeschaltet (ON).
-# --- Node / Angular --- 
-node_modules/ 
-dist/ 
-.angular/ 
-ECHO ist eingeschaltet (ON).
-# --- Editor / OS --- 
-.vscode/ 
-*.swp 
-.DS_Store 
-ECHO ist eingeschaltet (ON).
-# --- Secrets / Environment --- 
+
+# virtuelle Umgebungen
+env/
+.venv/
+env_win_backup/
+
+# ------------------------------------------------------------------
+# Node / Angular
+# ------------------------------------------------------------------
+node_modules/
+dist/
+.angular/
+
+# ------------------------------------------------------------------
+# Editor / Betriebssystem
+# ------------------------------------------------------------------
+.vscode/
+*.swp
+.DS_Store
+
+# ------------------------------------------------------------------
+# Secrets / Environment
+# ------------------------------------------------------------------
 .env
