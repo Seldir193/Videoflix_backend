@@ -1,7 +1,12 @@
+
+
 from pathlib import Path
 import os
-from decouple import config
+from decouple import config, Csv
 
+
+
+from datetime import timedelta
 import datetime
 import django.utils.timezone as _tz
 if not hasattr(_tz, "utc"):
@@ -18,10 +23,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-%%ntge@8p3=9_*bgj@$6fjzo_6^1w@&1v$uf0i)3v3n4f3iq62"
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+
+SECRET_KEY = config("SECRET_KEY")
+
+
+# SECURITY WARNING: don't run with debug turned on in production!
+#DEBUG = True
+
+#ALLOWED_HOSTS = []
+
+
+DEBUG = config("DEBUG", default=False, cast=bool)
+
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
+
 
 
 # Application definition
@@ -40,10 +56,49 @@ INSTALLED_APPS = [
      "debug_toolbar",
      'django_rq',
      'import_export',
-     'users'
+     'users',
+      "djoser", 
+      "rest_framework_simplejwt"
 ]
 
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
+}
+
+
+DJOSER = {
+    "LOGIN_FIELD": "email",          #  <<  hinzufügen!
+   # "SEND_ACTIVATION_EMAIL": True,
+   
+    "USER_CREATE_PASSWORD_RETYPE": True, 
+    "SEND_ACTIVATION_EMAIL": False,
+    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
+    "SERIALIZERS": {
+        "user_create": "users.serializers.UserCreateSerializer",
+        "user": "users.serializers.UserSerializer",
+    },
+}
+
+
+#EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # dev
+
+EMAIL_BACKEND = config(
+    "EMAIL_BACKEND",
+    default="django.core.mail.backends.console.EmailBackend",
+)
+
 AUTH_USER_MODEL = 'users.CustomUser'
+
+# Simple-JWT Feintuning
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
+}
 
 
 RQ_QUEUES = {
@@ -61,6 +116,7 @@ RQ_QUEUES = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
+     
 ]
 
 INTERNAL_IPS = [
@@ -139,6 +195,7 @@ DATABASES = {
 }
 
 
+
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
@@ -191,3 +248,32 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
+
+
+
+if not DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = config("EMAIL_HOST")
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
