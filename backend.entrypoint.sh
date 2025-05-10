@@ -20,24 +20,24 @@ python manage.py migrate
 
 # Create a superuser using environment variables
 # (Dein Superuser-Erstellungs-Code bleibt gleich)
-python manage.py shell <<EOF
-import os
-from django.contrib.auth import get_user_model
+# python manage.py shell <<EOF
+# import os
+# from django.contrib.auth import get_user_model
 
-User = get_user_model()
-username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
-email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
-password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
+# User = get_user_model()
+# username = os.environ.get('DJANGO_SUPERUSER_USERNAME', 'admin')
+# email = os.environ.get('DJANGO_SUPERUSER_EMAIL', 'admin@example.com')
+# password = os.environ.get('DJANGO_SUPERUSER_PASSWORD', 'adminpassword')
 
-if not User.objects.filter(username=username).exists():
-    print(f"Creating superuser '{username}'...")
-    # Korrekter Aufruf: username hier übergeben
-    User.objects.create_superuser(username=username, email=email, password=password)
-    print(f"Superuser '{username}' created.")
-else:
-    print(f"Superuser '{username}' already exists.")
-EOF
+# if not User.objects.filter(username=username).exists():
+#     print(f"Creating superuser '{username}'...")
+#     # Korrekter Aufruf: username hier übergeben
+#     User.objects.create_superuser(username=username, email=email, password=password)
+#     print(f"Superuser '{username}' created.")
+# else:
+#     print(f"Superuser '{username}' already exists.")
+# EOF
 
 python manage.py rqworker default &
 
-exec gunicorn core.wsgi:application --bind 0.0.0.0:8000
+exec gunicorn videoflix.wsgi:application --bind 0.0.0.0:8000
