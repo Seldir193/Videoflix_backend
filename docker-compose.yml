@@ -40,4 +40,18 @@ volumes:
   postgres_data:
   redis_data:
   videoflix_media:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PROJECT_DIR}/media
+
+  # collectstatic-Ergebnis
   videoflix_static:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${PROJECT_DIR}/static
+
+ 
