@@ -1,29 +1,44 @@
-from django.contrib import admin
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from videos.views import VideoViewSet 
-from django.conf.urls.static import static
+"""videoflix/urls.py – konsolidierte URL-Konfiguration"""
+from __future__ import annotations
+
 from django.conf import settings
-from debug_toolbar.toolbar import debug_toolbar_urls
-import debug_toolbar
+from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 
+from videos.views import ProgressViewSet, VideoViewSet
+
+# ---------------------------------------------------------------------------
+# DRF-Router (API v1)
+# ---------------------------------------------------------------------------
 router = DefaultRouter()
-router.register(r"videos", VideoViewSet)
+router.register(r"videos",    VideoViewSet)
+router.register(r"progress",  ProgressViewSet, basename="progress")
 
+# ---------------------------------------------------------------------------
+# URL-Patterns
+# ---------------------------------------------------------------------------
 urlpatterns = [
+    # Admin
     path("admin/", admin.site.urls),
-    path("api/", include(router.urls)),  
-    
-    path("api/auth/", include("djoser.urls")),
-    path("api/auth/", include("djoser.urls.jwt")),
-    
-    path('django-rq/', include('django_rq.urls'))
-] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 
+    # API
+    path("api/",       include(router.urls)),
+    path("api/auth/",  include("djoser.urls")),
+    path("api/auth/",  include("djoser.urls.jwt")),
 
+    # RQ-Dashboard
+    path("django-rq/", include("django_rq.urls")),
+]
+
+# ---------------------------------------------------------------------------
+# Statische Medien nur im DEBUG-Modus direkt aus Django dienen
+# ---------------------------------------------------------------------------
 if settings.DEBUG:
-    urlpatterns += [
-        path("__debug__/", include(debug_toolbar.urls)),
-    ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
+    # Debug Toolbar
+    import debug_toolbar  # noqa: WPS433 – nur dev
 
+    urlpatterns += [path("__debug__/", include(debug_toolbar.urls))]

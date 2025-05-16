@@ -36,3 +36,16 @@ dist/
 # Secrets / Environment
 # ------------------------------------------------------------------
 .env
+
+# ------------------------------------------------------------------
+# Media- & Video-Uploads (nicht ins Repo!)
+# ------------------------------------------------------------------
+media/
+videos/          # falls du außerhalb von MEDIA_ROOT noch einen Ordner hast
+*.mp4
+*.mov
+*.mkv
+*.m4v
+*.jpg
+*.png
+*.webp

@@ -46,24 +46,33 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 # Application definition
 
 INSTALLED_APPS = [
+    # 1) 3rd-party translation engine zuerst
+    "modeltranslation",
+
+    # 2) sonstige Third-Party-Middleware (cors, etc.)
     "corsheaders",
+
+    # 3) Django core
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    'rest_framework',
-    # 'videos',
-    'videos.apps.VideosConfig',
-    "debug_toolbar",
-    'django_rq',
-    'import_export',
-    'users',
+
+    # 4) deine eigenen / übrigen Apps
+    "videos.apps.VideosConfig",   # <– benutzt jetzt modeltranslation korrekt
+    "users",
+
+    # 5) REST & Tools
+    "rest_framework",
     "djoser",
     "rest_framework_simplejwt",
-    
+    "import_export",
+    "django_rq",
+    "debug_toolbar",
 ]
+
 
 
 REST_FRAMEWORK = {
@@ -127,11 +136,16 @@ RQ_QUEUES = {
     },
 }
 
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
 
 ]
+
+
+CORS_EXPOSE_HEADERS = ["Content-Range", "Accept-Ranges"]
+
 
 INTERNAL_IPS = [
     # ...
@@ -148,9 +162,10 @@ CACHE_TTL = 60 * 15
 # ]
 
 MIDDLEWARE = [
+     "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
+   
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -255,6 +270,14 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
+
+LANGUAGES = (
+    ('en', 'English'),
+    ('de', 'Deutsch'),
+)
+ 
+
+
 
 TIME_ZONE = "UTC"
 

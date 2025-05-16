@@ -1,28 +1,41 @@
-services:
+version: "3.9"
 
+services:
   db:
-    image: postgres:latest
+    image: postgres:17
     container_name: videoflix_database
     environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
+      POSTGRES_DB:       ${DB_NAME}
+      POSTGRES_USER:     ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: redis:latest
+    image: redis:7
     container_name: videoflix_redis
     volumes:
       - redis_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "PING"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   web:
     build:
       context: .
       dockerfile: backend.Dockerfile
-    env_file: .env
     container_name: videoflix_backend
-
+    env_file: .env
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
       - videoflix_media:/app/media
@@ -32,26 +45,41 @@ services:
     depends_on:
       - db
       - redis
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
-
-
+  rqworker:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    container_name: videoflix_rqworker
+    env_file: .env
+    command: python manage.py rqworker default
+    volumes:
+      - .:/app
+      - videoflix_media:/app/media
+    depends_on:
+      - redis
+    restart: unless-stopped
 
 volumes:
   postgres_data:
   redis_data:
+
   videoflix_media:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${PROJECT_DIR}/media
+      device: ./media
 
-  # collectstatic-Ergebnis
   videoflix_static:
     driver: local
     driver_opts:
       type: none
       o: bind
-      device: ${PROJECT_DIR}/static
-
- 
+      device: ./static

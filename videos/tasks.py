@@ -1,28 +1,127 @@
-#import subprocess
-#def convert720p(source):
-    #new_file_name = source + 'tiny_720p.mp4'
-   # cmd = 'ffmpeg -i "{}" -s hd720 -c:v libx264 -crf 23 -c:a aac -strict -2 "{}"'.format(source, new_file_name)
-    #subprocess.run(cmd, capture_output=True)
-    
-    
 
-# videos/tasks.py
+
+
+
+
+
+"""videos/tasks.py – robuste FFmpeg-Pipeline (django‑rq)
+
+* 4 Renditionen (1080/720/360/240) mit `+faststart`
+* Thumbnails (hero + thumb) bei 25 % der Laufzeit
+* Ausführliches Logging – Exit‑Code > 0 wirft eine Exception → Job wandert
+  in *Failed Jobs* und kann re‑queued werden.
+* Großzügiges `job_timeout` setzt bereits der Signal‑Handler (siehe signals.py).
+"""
+from __future__ import annotations
+
+import json
 import subprocess
 from pathlib import Path
+from typing import Final
 
-def convert720p(src: str) -> None:
-    """
-    Konvertiert eine Videodatei nach 720p und speichert sie als *_720p.mp4.
-    """
-    src_path = Path(src)
-    dst_path = src_path.with_stem(src_path.stem + "_720p").with_suffix(".mp4")
+from django.conf import settings
+from django_rq   import enqueue
 
-    cmd = [
-        "ffmpeg",
-        "-i", str(src_path),
-        "-s", "hd720",
-        "-c:v", "libx264", "-crf", "23",
-        "-c:a", "aac", "-strict", "-2",
-        str(dst_path),
+from .models import Video
+
+# ---------------------------------------------------------------------------
+# Konstanten
+# ---------------------------------------------------------------------------
+RENDITIONS: Final[list[tuple[str, int, str]]] = [
+    ("1080p", 1080, "5000k"),
+    ("720p",   720, "3000k"),
+    ("360p",   360, "800k"),
+    ("240p",   240, "400k"),
+]
+
+FFMPEG = settings.__dict__.get("FFMPEG_BINARY", "ffmpeg")
+FFPROBE = settings.__dict__.get("FFPROBE_BINARY", "ffprobe")
+
+# ---------------------------------------------------------------------------
+# Helper: subprocess wrapper
+# ---------------------------------------------------------------------------
+
+def run(cmd: list[str]) -> None:  # noqa: D401
+    """Execute *cmd* and stream stdout/stderr to the worker log."""
+    print("\u25B6", " ".join(cmd))
+    cp = subprocess.run(cmd, text=True, capture_output=True)
+    if cp.stdout:
+        print(cp.stdout)
+    if cp.stderr:
+        print(cp.stderr)
+    cp.check_returncode()
+
+# ---------------------------------------------------------------------------
+# 1️⃣  MP4‑Renditionen erzeugen
+# ---------------------------------------------------------------------------
+
+def create_variants(video_id: int) -> None:  # noqa: D401
+    vid = Video.objects.get(pk=video_id)
+    if not vid.video_file:
+        raise FileNotFoundError("Original‑Upload fehlt – nichts zu tun.")
+
+    src     = Path(vid.video_file.path)
+    out_dir = Path(settings.MEDIA_ROOT, "videos")
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    variants: dict[int, str] = {}
+
+    for tag, height, br in RENDITIONS:
+        dst = out_dir / f"{src.stem}_{tag}.mp4"
+        if dst.exists():
+            variants[height] = dst.relative_to(settings.MEDIA_ROOT).as_posix()
+            continue
+
+        run([
+            FFMPEG, "-y", "-i", str(src),
+            "-vf", f"scale=-2:{height}",
+            "-c:v", "libx264", "-preset", "veryfast", "-b:v", br,
+            "-c:a", "aac", "-b:a", "128k", "-ac", "2",
+            "-movflags", "+faststart",
+            str(dst),
+        ])
+        variants[height] = dst.relative_to(settings.MEDIA_ROOT).as_posix()
+
+    if not variants:
+        raise RuntimeError("Keine Renditionen erzeugt – FFmpeg fehlgeschlagen?")
+
+    preferred = 720 if 720 in variants else max(variants)
+    vid.source_url      = variants[preferred]
+    vid.source_variants = [
+        {"path": variants[h], "height": h} for h in sorted(variants, reverse=True)
     ]
-    subprocess.run(cmd, check=True, capture_output=True)
+    vid.save(update_fields=["source_url", "source_variants"])
+
+    enqueue(extract_thumb, video_id, str(src))
+
+# ---------------------------------------------------------------------------
+# 2️⃣  Thumbnails
+# ---------------------------------------------------------------------------
+
+def extract_thumb(video_id: int, src_path: str) -> None:  # noqa: D401
+    vid = Video.objects.get(pk=video_id)
+    out = Path(settings.MEDIA_ROOT, "thumbs", str(video_id))
+    out.mkdir(parents=True, exist_ok=True)
+
+    hero  = out / "hero.jpg"
+    thumb = out / "thumb.png"
+
+    # Video‑Länge ermitteln (Sekunden)
+    dur = float(subprocess.check_output([
+        FFPROBE, "-v", "error", "-select_streams", "v:0",
+        "-show_entries", "format=duration",
+        "-of", "default=nokey=1:noprint_wrappers=1", src_path,
+    ]))
+    ts = max(dur * 0.25, 1)
+
+    if not hero.exists():
+        run([FFMPEG, "-y", "-ss", str(ts), "-i", src_path, "-vframes", "1", "-vf", "scale=1280:-1", str(hero)])
+    if not thumb.exists():
+        run([FFMPEG, "-y", "-ss", str(ts), "-i", src_path, "-vframes", "1", "-vf", "scale=320:-1", str(thumb)])
+
+    vid.hero_frame = hero.relative_to(settings.MEDIA_ROOT).as_posix()
+    vid.thumb      = thumb.relative_to(settings.MEDIA_ROOT).as_posix()
+    vid.save(update_fields=["hero_frame", "thumb"])
+
+    # Für Debugging in Failed Jobs sichtbar machen
+    print("Variants:", json.dumps(vid.source_variants, indent=2))
