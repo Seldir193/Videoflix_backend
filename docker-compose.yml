@@ -40,8 +40,9 @@ services:
       - .:/app
       - videoflix_media:/app/media
       - videoflix_static:/app/static
-    ports:
-      - "8000:8000"
+    expose:
+    - "8000"
+
     depends_on:
       - db
       - redis
@@ -64,6 +65,19 @@ services:
       - videoflix_media:/app/media
     depends_on:
       - redis
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: videoflix_nginx
+    ports:
+      - "80:80"                         # öffentlich
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./static:/app/static:ro         # 1:1 wie im Backend-Volume
+      - ./media:/app/media:ro
+    depends_on:
+      - web                             # dein bestehender Django-Service
     restart: unless-stopped
 
 volumes:
