@@ -75,7 +75,7 @@ def create_variants(video_id: int) -> None:  # noqa: D401
         run([
             FFMPEG, "-y", "-i", str(src),
             "-vf", f"scale=-2:{height}",
-            "-c:v", "libx264", "-preset", "veryfast", "-b:v", br,
+            "-c:v", "libx264", "-preset", "veryfast", "-crf", "23",  
             "-c:a", "aac", "-b:a", "128k", "-ac", "2",
             "-movflags", "+faststart",
             str(dst),
