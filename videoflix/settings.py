@@ -35,7 +35,10 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 
 # DEBUG = config("DEBUG", default=False, cast=bool)
-DEBUG = os.getenv('DEBUG')
+#DEBUG = os.getenv('DEBUG')
+# settings.py   (ganz oben bei den Flags)
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
+
 
 # ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1", cast=Csv())
 
@@ -48,7 +51,7 @@ CSRF_TRUSTED_ORIGINS = os.environ.get(
 INSTALLED_APPS = [
     # 1) 3rd-party translation engine zuerst
     "modeltranslation",
-
+   
     # 2) sonstige Third-Party-Middleware (cors, etc.)
     "corsheaders",
 
@@ -59,10 +62,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
+      "django.contrib.sites", 
     # 4) deine eigenen / übrigen Apps
     "videos.apps.VideosConfig",   # <– benutzt jetzt modeltranslation korrekt
     "users",
+    
+    # "rest_framework_simplejwt.token_blacklist",
 
     # 5) REST & Tools
     "rest_framework",
@@ -73,7 +78,9 @@ INSTALLED_APPS = [
     "debug_toolbar",
 ]
 
+#SITE_ID = 1
 
+SITE_ID = 1
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -87,14 +94,18 @@ DJOSER = {
     # "SEND_ACTIVATION_EMAIL": True,
 
     "USER_CREATE_PASSWORD_RETYPE": True,
-    "SEND_ACTIVATION_EMAIL": False,
-    "ACTIVATION_URL": "activate/{uid}/{token}",
+    "SEND_ACTIVATION_EMAIL": True,
+   
+  #  "ACTIVATION_URL": "activate/{uid}/{token}",
+    "ACTIVATION_URL": "auth/activate/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "users.serializers.UserCreateSerializer",
         "user": "users.serializers.UserSerializer",
     },
 }
+
+
 
 
 # EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # dev
@@ -111,6 +122,9 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
+    
+   # "ROTATE_REFRESH_TOKENS": True,  # Dieser Wert sorgt dafür, dass Refresh-Tokens bei jeder Anfrage rotiert werden
+   # "BLACKLIST_AFTER_ROTATION": True,
 }
 
 
@@ -307,19 +321,33 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# if not DEBUG:
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = config("EMAIL_HOST")
-# EMAIL_HOST_USER = config("EMAIL_HOST_USER")
-# #EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
 
-EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.getenv("EMAIL_HOST", default="smtp.example.com")
-EMAIL_PORT = os.getenv("EMAIL_PORT", default=587)
-EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+#EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+#EMAIL_HOST = os.getenv("EMAIL_HOST", default="smtp.example.com")
+#EMAIL_PORT = os.getenv("EMAIL_PORT", default=587)
+#EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+#EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+#EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+#EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
+#DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+
+
+
+# ── settings.py – endgültige, eindeutige Mail-Konfiguration ─────────
+
+if DEBUG:
+    # Entwicklungsmodus: Mailinhalt erscheint in der Konsole
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+else:
+    # Production: echte SMTP-Daten aus ENV-Variablen
+    EMAIL_BACKEND      = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST         = os.getenv("EMAIL_HOST")          # z. B. smtp.yourhost.com
+    EMAIL_PORT         = os.getenv("EMAIL_PORT", 587)
+    EMAIL_HOST_USER    = os.getenv("EMAIL_HOST_USER")     # z. B. api@videoflix.com
+    EMAIL_HOST_PASSWORD= os.getenv("EMAIL_HOST_PASSWORD") # SMTP-Passwort
+    EMAIL_USE_TLS      = True                             # meist 587 + TLS
+
+# Absenderadresse für alle Systemmails
+DEFAULT_FROM_EMAIL = "noreply@videoflix.local"

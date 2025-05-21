@@ -9,6 +9,8 @@ from rest_framework.routers import DefaultRouter
 
 from videos.views import ProgressViewSet, VideoViewSet
 
+#from users.views import logout 
+
 # ---------------------------------------------------------------------------
 # DRF-Router (API v1)
 # ---------------------------------------------------------------------------
@@ -27,6 +29,8 @@ urlpatterns = [
     path("api/",       include(router.urls)),
     path("api/auth/",  include("djoser.urls")),
     path("api/auth/",  include("djoser.urls.jwt")),
+    
+  # path("api/auth/logout/", logout, name="logout"),
 
     # RQ-Dashboard
     path("django-rq/", include("django_rq.urls")),
