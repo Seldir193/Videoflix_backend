@@ -59,3 +59,14 @@ class ProgressViewSet(viewsets.ModelViewSet):
 
     # Keine Detail-Updates nötig – nur Position wird überschrieben → PATCH unnötig
     http_method_names = ["get", "post", "head", "options"]
+
+
+
+
+
+
+
+
+
+
+
