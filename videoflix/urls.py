@@ -10,7 +10,8 @@ from videos.views import ProgressViewSet, VideoViewSet
 
 from users import views 
 from django.contrib.auth import views as auth_views
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+#from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+#from rest_framework.authtoken.views import obtain_auth_token
 # ---------------------------------------------------------------------------
 # DRF-Router (API v1)
 # ---------------------------------------------------------------------------
@@ -29,6 +30,7 @@ urlpatterns = [
     re_path(r'^api/', include(router.urls)),  # Video und Progress API Endpoints
     re_path(r'^api/auth/', include('djoser.urls')),  # Djoser Auth-Routen (Registrierung, Login, Aktivierung)
     re_path(r'^api/auth/', include('djoser.urls.jwt')),  # JWT-Authentifizierung mit Djoser
+    #path('api/auth/', include('djoser.urls.authtoken')), 
     
     #path('api/auth/users/reset_password/', views.password_reset, name='password-reset'),
    # path('api/auth/users/reset_password_confirm/', views.password_reset_confirm, name='password-reset-confirm'),
@@ -48,8 +50,7 @@ urlpatterns = [
     
     path('auth/activate/<uidb64>/<token>/', views.activate, name='account-activate'),
 
-    path('api/auth/jwt/create/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    path('api/auth/jwt/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    
     
     # RQ-Dashboard für Redis Queue
     path("django-rq/", include("django_rq.urls")),

@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "import_export",
     "django_rq",
     "debug_toolbar",
+   # 'rest_framework.authtoken',
 ]
 
 
@@ -62,6 +63,7 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     "LOGIN_FIELD": "email",
+   # "TOKEN_MODEL": None,
     "USER_CREATE_PASSWORD_RETYPE": True,
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_PASSWORD_RESET_EMAIL": True, 
@@ -74,6 +76,7 @@ DJOSER = {
         "user": "users.serializers.UserSerializer",
     },
     "PASSWORD_RESET_EMAIL": "users/email/reset_password.html",
+    "TOKEN_MODEL": "rest_framework.authtoken.models.Token",
 }
 
 
