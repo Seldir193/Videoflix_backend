@@ -29,7 +29,7 @@ class CustomUserManager(BaseUserManager):
 # users/models.py
 class CustomUser(AbstractUser):
     username = None
-    email    = models.EmailField(unique=True)
+    email    = models.EmailField(unique=True, max_length=254)
 
     phone  = models.CharField(max_length=15, default="", blank=True)
     adress = models.CharField(max_length=150, default="", blank=True)

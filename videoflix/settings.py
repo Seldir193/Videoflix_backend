@@ -1,5 +1,3 @@
-
-
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -15,7 +13,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
-
+DOMAIN = "localhost"  
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default="localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS", default="http://localhost:4200").split(",")
@@ -36,11 +34,12 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django.contrib.sites",
+    
     # 4) deine eigenen / übrigen Apps
     "videos.apps.VideosConfig",   # <– benutzt jetzt modeltranslation korrekt
     "users",
 
-    # "rest_framework_simplejwt.token_blacklist",
+   
 
     # 5) REST & Tools
     "rest_framework",
@@ -65,9 +64,11 @@ DJOSER = {
     "LOGIN_FIELD": "email",
     "USER_CREATE_PASSWORD_RETYPE": True,
     "SEND_ACTIVATION_EMAIL": True,
+    "SEND_PASSWORD_RESET_EMAIL": True, 
     #  "ACTIVATION_URL": "activate/{uid}/{token}",
     "ACTIVATION_URL": "auth/activate/{uid}/{token}",
-    "PASSWORD_RESET_CONFIRM_URL": "password-reset/{uid}/{token}",
+   
+    "PASSWORD_RESET_CONFIRM_URL": "auth/password_reset_confirm/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "users.serializers.UserCreateSerializer",
         "user": "users.serializers.UserSerializer",
@@ -84,6 +85,8 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
     "AUTH_HEADER_TYPES": ("Bearer",),
+    
+   
 }
 
 RQ_QUEUES = {
@@ -97,11 +100,7 @@ RQ_QUEUES = {
 }
 
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
 
-]
 
 
 CORS_EXPOSE_HEADERS = ["Content-Range", "Accept-Ranges"]
@@ -145,7 +144,7 @@ ROOT_URLCONF = "videoflix.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [ BASE_DIR / 'templates',  ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -160,16 +159,17 @@ TEMPLATES = [
 WSGI_APPLICATION = "videoflix.wsgi.application"
 
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DB_NAME", default="videoflix_db"),
-        "USER": os.environ.get("DB_USER", default="videoflix_user"),
-        "PASSWORD": os.environ.get("DB_PASSWORD", default="supersecretpassword"),
-        "HOST": os.environ.get("DB_HOST", default="db"),
-        "PORT": os.environ.get("DB_PORT", default=5432)
-    }
-}
+#DATABASES = {
+    #"default": {
+       # "ENGINE": "django.db.backends.postgresql",
+       # "NAME": os.environ.get("DB_NAME", default="videoflix_db"),
+      #  "USER": os.environ.get("DB_USER", default="videoflix_user"),
+      #  "PASSWORD": os.environ.get("DB_PASSWORD", default="supersecretpassword"),
+        #"HOST": os.environ.get("DB_HOST", default="db"),
+       # "PORT": os.environ.get("DB_PORT", default=5432)
+   # }
+#}
+
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -214,14 +214,14 @@ MEDIA_ROOT = BASE_DIR / "media"
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-# EMAIL_HOST = os.getenv("EMAIL_HOST", default="smtp.example.com")
-# EMAIL_PORT = os.getenv("EMAIL_PORT", default=587)
-# EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
-# EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-# EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
-# EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
-# DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
+ #EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+ #EMAIL_HOST = os.getenv("EMAIL_HOST", default="smtp.example.com")
+ #EMAIL_PORT = os.getenv("EMAIL_PORT", default=587)
+ #EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+ #EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+ #EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS")
+ #EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL")
+ #DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL")
 
 
 if DEBUG:
@@ -240,3 +240,30 @@ else:
 
 # Absenderadresse für alle Systemmails
 DEFAULT_FROM_EMAIL = "noreply@videoflix.local"
+
+
+
+
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+]
+
+CSRF_COOKIE_NAME = "csrftoken"
+CSRF_HEADER_NAME = "X-CSRFToken"
+
+CORS_ALLOW_CREDENTIALS = True
+
+
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.environ.get('DB_NAME', 'videoflix_db'),
+        'USER': os.environ.get('DB_USER', 'vf_user'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'selcuk'),
+        'HOST': os.environ.get('DB_HOST', 'db'),
+        'PORT': os.environ.get('DB_PORT', 5432),
+    }
+}
