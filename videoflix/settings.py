@@ -13,7 +13,9 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
-DOMAIN = "localhost"  
+#DOMAIN = "localhost"  
+DOMAIN = "localhost:4200"
+
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", default="localhost").split(",")
 CSRF_TRUSTED_ORIGINS = os.environ.get(
     "CSRF_TRUSTED_ORIGINS", default="http://localhost:4200").split(",")
@@ -63,20 +65,23 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     "LOGIN_FIELD": "email",
-   # "TOKEN_MODEL": None,
-    "USER_CREATE_PASSWORD_RETYPE": True,
+    "TOKEN_MODEL": None,
+    "USER_CREATE_PASSWORD_RETYPE": True, 
+    'USER_CREATE_PASSWORD_CONFIRM': True,
+    
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_PASSWORD_RESET_EMAIL": True, 
     #  "ACTIVATION_URL": "activate/{uid}/{token}",
-    "ACTIVATION_URL": "auth/activate/{uid}/{token}",
+   "ACTIVATION_URL": "auth/activate/{uid}/{token}",
    
-    "PASSWORD_RESET_CONFIRM_URL": "auth/password_reset_confirm/{uid}/{token}",
+    #"PASSWORD_RESET_CONFIRM_URL": "auth/password_reset_confirm/{uid}/{token}",
+    "PASSWORD_RESET_CONFIRM_URL":  "auth/reset-password/{uid}/{token}",
     "SERIALIZERS": {
         "user_create": "users.serializers.UserCreateSerializer",
         "user": "users.serializers.UserSerializer",
     },
     "PASSWORD_RESET_EMAIL": "users/email/reset_password.html",
-    "TOKEN_MODEL": "rest_framework.authtoken.models.Token",
+
 }
 
 
@@ -91,6 +96,7 @@ SIMPLE_JWT = {
     
    
 }
+
 
 RQ_QUEUES = {
     'default': {
