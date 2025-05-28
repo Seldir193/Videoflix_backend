@@ -2,8 +2,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
-
-
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
@@ -24,19 +22,15 @@ class CustomUserManager(BaseUserManager):
         return self.create_user(email, password, **extra_fields)
 
 
-
-
-# users/models.py
 class CustomUser(AbstractUser):
     username = None
-    email    = models.EmailField(unique=True, max_length=254)
+    email = models.EmailField(unique=True, max_length=254)
 
-    phone  = models.CharField(max_length=15, default="", blank=True)
+    phone = models.CharField(max_length=15, default="", blank=True)
     adress = models.CharField(max_length=150, default="", blank=True)
     custom = models.CharField(max_length=1000, default="", blank=True)
 
-    USERNAME_FIELD  = "email"
+    USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
 
     objects = CustomUserManager()
-

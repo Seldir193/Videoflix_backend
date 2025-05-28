@@ -8,8 +8,10 @@ if not hasattr(_tz, "utc"):
     _tz.utc = datetime.timezone.utc
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+load_dotenv(BASE_DIR / ".env")
 SECRET_KEY = os.getenv('SECRET_KEY')
+
+
 
 DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
@@ -41,7 +43,7 @@ INSTALLED_APPS = [
     "videos.apps.VideosConfig",   # <– benutzt jetzt modeltranslation korrekt
     "users",
 
-   
+  
 
     # 5) REST & Tools
     "rest_framework",
@@ -127,9 +129,16 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     'whitenoise.middleware.WhiteNoiseMiddleware',
+   
+    
 
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    
+     'django.middleware.locale.LocaleMiddleware',
+    
+    
+    
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",

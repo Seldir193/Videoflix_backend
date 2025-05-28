@@ -3,6 +3,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.shortcuts import redirect, HttpResponse
 from django.utils.http import urlsafe_base64_decode
 
+
 def activate(request, uidb64: str, token: str):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -16,14 +17,3 @@ def activate(request, uidb64: str, token: str):
             user.save(update_fields=["is_active"])
         return redirect("http://localhost:4200/auth/login?activated=yes")
     return HttpResponse("Activation link is invalid or expired.", status=400)
-
-
-
-
-
-
-
-
-
-
-

@@ -13,8 +13,7 @@ class VideosConfig(AppConfig):
         Wird von Django beim Start einmal aufgerufen.
         Registriert Übersetzungs­klassen und Signals.
         """
-        # pylint: disable=import-outside-toplevel
-        from . import translation  # noqa: F401  – modeltranslation registrieren
-        from . import signals      # noqa: F401  – post_save / post_delete binden
+        from . import translation
+        from . import signals
 
         super().ready()

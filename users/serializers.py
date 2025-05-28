@@ -18,13 +18,14 @@ class UserCreateSerializer(BaseCreateSerializer):
         extra_kwargs = {
             're_password': {'write_only': True},
         }
-        
+
     def validate_email(self, value):
         """Optional: Sicherstellen, dass die E-Mail-Adresse nicht länger als 254 Zeichen ist."""
         if len(value) > 254:
-            raise serializers.ValidationError("E-Mail-Adresse ist zu lang. Die maximale Länge ist 254 Zeichen.")
+            raise serializers.ValidationError(
+                "E-Mail-Adresse ist zu lang. Die maximale Länge ist 254 Zeichen.")
         return value
-        
+
     def validate(self, data):
         """Stelle sicher, dass das Passwort und das Wiederholungspasswort übereinstimmen."""
         if data["password"] != data["re_password"]:
@@ -32,20 +33,17 @@ class UserCreateSerializer(BaseCreateSerializer):
                 "re_password": ("Die Passwörter stimmen nicht überein.")
             })
         return data
-   
-   
+
     def create(self, validated_data):
-    # Entferne 're_password' aus den validierten Daten, da wir es nicht speichern
+
         validated_data.pop('re_password', None)
 
-    # Benutzer erstellen
-        user = super().create(validated_data)  # Benutzer wird erstellt
-        user.is_active = False  # Konto deaktivieren (Benutzer muss aktiviert werden)
+        user = super().create(validated_data)
+        user.is_active = False
         user.save(update_fields=["is_active"])
 
-    # Djoser kümmert sich um das Senden der Aktivierungs-E-Mail
-
         return user
+
 
 class UserSerializer(BaseUserSerializer):
     class Meta(BaseUserSerializer.Meta):

@@ -1,19 +1,18 @@
-
 # users/admin.py
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models  import CustomUser
-from .forms   import CustomUserCreationForm
-#from djoser.views import UserActivationView
+from .models import CustomUser
+from .forms import CustomUserCreationForm
 from djoser.email import ActivationEmail
+
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
-    add_form      = CustomUserCreationForm
-    ordering      = ("email",)
-    list_display  = ("email", "is_staff", "is_active")
+    add_form = CustomUserCreationForm
+    ordering = ("email",)
+    list_display = ("email", "is_staff", "is_active")
     list_display_links = ("email",)
-    list_filter   = ("is_active", "is_staff", "is_superuser")
+    list_filter = ("is_active", "is_staff", "is_superuser")
     search_fields = ("email", "phone")
 
     # ---- Aktionen ---------------------------------------------------
@@ -41,6 +40,3 @@ class CustomUserAdmin(UserAdmin):
                        "is_staff", "is_active"),
         }),
     )
-
-
-
