@@ -19,7 +19,7 @@ FFMPEG = settings.__dict__.get("FFMPEG_BINARY", "ffmpeg")
 FFPROBE = settings.__dict__.get("FFPROBE_BINARY", "ffprobe")
 
 
-def run(cmd: list[str]) -> None:  # noqa: D401
+def run(cmd: list[str]) -> None:  
 
     print("\u25B6", " ".join(cmd))
     cp = subprocess.run(cmd, text=True, capture_output=True)
@@ -95,6 +95,10 @@ def extract_thumb(video_id: int, src_path: str) -> None:
 
     vid.hero_frame = hero.relative_to(settings.MEDIA_ROOT).as_posix()
     vid.thumb = thumb.relative_to(settings.MEDIA_ROOT).as_posix()
-    vid.save(update_fields=["hero_frame", "thumb"])
+    
+    if not vid.duration:
+        vid.duration = round(dur)
+    
+    vid.save(update_fields=["hero_frame", "thumb", "duration"])
 
     print("Variants:", json.dumps(vid.source_variants, indent=2))

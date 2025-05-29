@@ -35,6 +35,9 @@ class Video(models.Model):
 
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True)
+    
+    duration   = models.PositiveIntegerField(null=True, blank=True)  
+    is_trailer = models.BooleanField(default=False)
 
     genre = models.CharField(max_length=100, blank=True)
     release = models.DateField(null=True, blank=True)

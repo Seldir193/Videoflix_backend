@@ -21,16 +21,17 @@ class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
 
     resource_class = VideoResource
     list_display = (
-        "id", "thumb_tag", "title", "category", "genre", "release", "created_at", "variants_ready",
+        "id", "thumb_tag", "title", "category","is_trailer",        
+        "duration", "genre", "release", "created_at", "variants_ready",
     )
-    list_filter = ("category", "genre")
+    list_filter = ("category", "genre", "is_trailer")
     search_fields = ("title", "description")
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
-    readonly_fields = ("source_variants", "thumb_tag")
+    readonly_fields = ("source_variants", "thumb_tag" ,"duration")
 
     fieldsets = (
-        (None, {"fields": ("title", "description", "category", "thumb_tag")}),
+        (None, {"fields": ("title", "description", "category", "is_trailer","thumb_tag")}),
         ("Meta", {"fields": ("genre", "release",
          "director", "license_type", "license_url")}),
         ("Dateien & Pfade", {

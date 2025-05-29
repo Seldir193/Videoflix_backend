@@ -4,14 +4,14 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import re_path, include, path
 from rest_framework.routers import DefaultRouter
-from videos.views import ProgressViewSet, VideoViewSet
+from videos.views import ProgressViewSet, VideoViewSet, TrailerList
 from users.views import activate
 from users import views
 from django.contrib.auth import views as auth_views
 
 router = DefaultRouter()
-router.register(r"videos", VideoViewSet)
 router.register(r"progress", ProgressViewSet, basename="progress")
+router.register(r"videos",    VideoViewSet, basename="videos")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -31,6 +31,8 @@ urlpatterns = [
 
     path('activate/<uidb64>/<token>/', activate, name='account-activate'),
     path("django-rq/", include("django_rq.urls")),
+    
+    path("api/trailers/", TrailerList.as_view(), name="trailer-list"),
 ]
 
 if settings.DEBUG:
