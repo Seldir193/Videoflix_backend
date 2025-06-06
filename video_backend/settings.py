@@ -206,18 +206,21 @@ USE_TZ = True
 
 WHITENOISE_ADD_HEADERS = True
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "static"
+#STATIC_ROOT = BASE_DIR / "static"
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-#STATICFILES_DIRS = [BASE_DIR / "static_src"] 
-#STATIC_ROOT = BASE_DIR / "staticfiles" 
+STATICFILES_DIRS = [BASE_DIR / "static"] 
+STATIC_ROOT = BASE_DIR / "staticfiles" 
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 WHITENOISE_MAX_AGE = 86400
 
 WHITENOISE_USE_FINDERS = True
+
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 INTERNAL_IPS = [
