@@ -1,0 +1,14 @@
+{# templates/djoser/email/activation.txt #}
+
+{% block text_body %}
+Dear {{ user.first_name|default:user.username }},
+
+Thank you for registering with Videoflix. To complete your registration and verify your email address, please click the link below:
+
+{{ protocol }}://{{ domain }}/{{ url|safe }}
+
+If you did not create an account with us, please disregard this email.
+
+Best regards,
+Your Videoflix Team
+{% endblock text_body %}

@@ -1,0 +1,63 @@
+services:
+
+  db:
+    image: postgres:latest
+    container_name: videoflix_database
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: videoflix_redis
+    volumes:
+      - redis_data:/data
+
+  web:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    env_file: .env
+
+    command: >
+     gunicorn config.wsgi:application \
+     --bind 0.0.0.0:8000 \
+     --workers 3 \
+     --worker-class gevent \
+     --timeout 180 \
+     --keep-alive 5
+
+    container_name: videoflix_backend
+    volumes:
+      - .:/app
+      - videoflix_media:/app/media
+      - videoflix_static:/app/static
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+
+  rqworker:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    container_name: videoflix_rqworker
+    env_file: .env
+    command: python manage.py rqworker default
+    volumes:
+      - .:/app
+      - videoflix_media:/app/media
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
+  videoflix_media:
+  videoflix_static:

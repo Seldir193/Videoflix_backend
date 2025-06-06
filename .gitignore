@@ -1,0 +1,41 @@
+# === Python / Django ===
+*.py[cod]
+__pycache__/
+env/
+.venv/
+*.sqlite3
+
+# === OS / Editor ===
+*.log
+*.swp
+.DS_Store
+Thumbs.db
+
+# === Docker & Build ===
+*.tar
+*.pid
+*.seed
+*.coverage
+htmlcov/
+coverage.xml
+# Artefakte von docker compose build
+staticfiles/
+media/
+*.tmp
+# Container-Log-Verzeichnisse
+logs/
+
+# === Node / Angular (falls UI im selben Repo) ===
+node_modules/
+dist/
+
+# === Secrets ===
+.env
+.env.*          # z. B. .env.production, .env.dev
+docker/.env
+
+# === VS Code ===
+.vscode/
+
+# Andere persönliche Ordner
+.idea/
