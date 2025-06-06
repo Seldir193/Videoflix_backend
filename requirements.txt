@@ -50,4 +50,5 @@ django-templated-mail==1.0.0
 ffmpeg-python
 moviepy==1.0.3
 python-dotenv
+gevent>=24.2.1
 
