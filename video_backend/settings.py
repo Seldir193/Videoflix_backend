@@ -154,6 +154,12 @@ DJOSER = {
     "ACTIVATION_URL": "auth/activate/{uid}/{token}",
     "PASSWORD_RESET_CONFIRM_URL": "auth/reset-password/{uid}/{token}",
 
+    
+   # "ACTIVATION_URL": f"{FRONTEND_PROTOCOL}://{FRONTEND_DOMAIN}/auth/activate/{{uid}}/{{token}}",
+   # "PASSWORD_RESET_CONFIRM_URL": f"{FRONTEND_PROTOCOL}://{FRONTEND_DOMAIN}/auth/reset-password/{{uid}}/{{token}}",
+
+
+
     "EMAIL": {
         "activation": "accounts.email.CustomActivationEmail",
         "password_reset": "accounts.email.CustomPasswordResetEmail",

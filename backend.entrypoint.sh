@@ -14,7 +14,12 @@ done
 echo "PostgreSQL ist bereit - fahre fort..."
 
 # Deine originalen Befehle (ohne wait_for_db)
-python manage.py collectstatic --noinput
+#python manage.py collectstatic --noinput
+
+python manage.py collectstatic --noinput --ignore=admin --ignore=debug_toolbar --ignore=import_export --ignore=modeltranslation --ignore=rest_framework
+
+
+
 python manage.py makemigrations
 python manage.py migrate
 

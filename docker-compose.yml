@@ -27,7 +27,7 @@ services:
      --bind 0.0.0.0:8000 \
      --workers 3 \
      --worker-class gevent \
-     --timeout 180 \
+     --timeout 300 \
      --keep-alive 5
 
     container_name: videoflix_backend
@@ -55,7 +55,17 @@ services:
     depends_on:
       - redis
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          memory: 1G       # oder eine andere Menge, die du für nötig hältst
+          cpus: '0.5'      # eine halbe CPU, je nach Bedarf
+        reservations:
+          memory: 500M     # Minimum, das dem Container zugewiesen wird
+          cpus: '0.25'     # Mindestanteil der CPU
 
+
+ 
 volumes:
   postgres_data:
   redis_data:
