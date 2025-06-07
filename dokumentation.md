@@ -140,6 +140,20 @@ Video transcoding is handled by background tasks defined in `videos/tasks.py`. T
 
 ---
 
+## Media & Static Files
+
+In the backend, media and static files are handled by Django with the help of **WhiteNoise** for serving static files in production and **Django**'s default configuration for media files (e.g., uploaded videos, thumbnails).
+
+### Static Files
+
+Static files include assets such as CSS, JavaScript, and image files that are required for the frontend of the application. During development, Django serves these files directly. In production, **WhiteNoise** is used to serve static files more efficiently.
+
+To collect static files and prepare them for production, use the following command:
+
+```bash
+python manage.py collectstatic
+```
+
 ## Environment Variables
 
 The backend relies on several environment variables for configuration. These variables can be found in the `.env` file. Some of the key environment variables include:
