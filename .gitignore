@@ -1,31 +1,42 @@
-# === Python / Django ===
-*.py[cod]
+# === Byte-compiled / optimized / DLL files ===
 __pycache__/
+*.py[cod]
+*$py.class
+
+# === Virtualenvs ===
 env/
 .venv/
-*.sqlite3
+venv/
 
-# === OS / Editor ===
-*.log
+# === SQLite / local DB ===
+*.sqlite3
+db.sqlite3
+
+# === Editor / OS files ===
 *.swp
 .DS_Store
 Thumbs.db
+.vscode/
+.idea/
 
-# === Docker & Build ===
-*.tar
-*.pid
-*.seed
-*.coverage
+# === Pytest / Coverage ===
+.pytest_cache/
+.coverage
 htmlcov/
 coverage.xml
-# Artefakte von docker compose build
-staticfiles/
-media/
+
+# === Logs / temp ===
+*.log
+*.pid
+*.seed
 *.tmp
-# Container-Log-Verzeichnisse
 logs/
 
-# === Node / Angular (falls UI im selben Repo) ===
+# === Docker build artifacts) ===
+*.tar
+docker-compose.override.yml
+
+# === Node / Angular if present ===
 node_modules/
 dist/
 
@@ -34,13 +45,10 @@ dist/
 .env.*          # z. B. .env.production, .env.dev
 docker/.env
 
-# === VS Code ===
-.vscode/
-
-# Andere persönliche Ordner
-.idea/
-
+# === Django local / media / static ===
+local_settings.py
+media/
+staticfiles/
 
 #docker//docker/
-
 /docker/

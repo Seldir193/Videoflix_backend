@@ -1,4 +1,5 @@
 from __future__ import annotations
+
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -6,8 +7,10 @@ from rest_framework import permissions, status, viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
+
 from .models import Video, WatchProgress
 from .serializers import ProgressSerializer, VideoSerializer
+from videos.utils import update_watch_progress
 
 __all__ = [
     "VideoViewSet",
@@ -20,7 +23,6 @@ CACHE_TTL: int = getattr(settings, "CACHE_TTL", 60 * 15)
 @method_decorator(cache_page(CACHE_TTL), name="list")
 @method_decorator(cache_page(CACHE_TTL), name="retrieve")
 class VideoViewSet(viewsets.ModelViewSet):
-
     serializer_class = VideoSerializer
 
     def get_queryset(self):
@@ -42,14 +44,11 @@ class ProgressViewSet(viewsets.ModelViewSet):
         return WatchProgress.objects.filter(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        data = request.data
-        obj, _ = WatchProgress.objects.update_or_create(
+        obj = update_watch_progress(
             user=request.user,
-            video_id=data.get("video"),
-            defaults={
-                "position": data.get("position", 0),
-                "duration": data.get("duration", 0),
-            },
+            video_id=request.data.get("video"),
+            position=request.data.get("position", 0),
+            duration=request.data.get("duration", 0),
         )
         return Response(self.get_serializer(obj).data, status=status.HTTP_201_CREATED)
 
@@ -59,5 +58,11 @@ class ProgressViewSet(viewsets.ModelViewSet):
 class TrailerList(ListAPIView):
     serializer_class = VideoSerializer
     queryset = Video.objects.filter(is_trailer=True, duration__lte=240)
-    permission_classes = [IsAuthenticated] 
-   
+    permission_classes = [IsAuthenticated]
+
+
+
+
+
+
+

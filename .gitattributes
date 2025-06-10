@@ -1,4 +1,3 @@
-# Verstecke große/minifizierte Bundles vor GitHub-Linguist
 static/**            linguist-vendored
 staticfiles/**       linguist-generated
 frontend/dist/**     linguist-generated

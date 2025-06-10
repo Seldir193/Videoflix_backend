@@ -17,9 +17,6 @@ echo "PostgreSQL ist bereit - fahre fort..."
 #python manage.py collectstatic --noinput
 
 python manage.py collectstatic --noinput --ignore=admin --ignore=debug_toolbar --ignore=import_export --ignore=modeltranslation --ignore=rest_framework
-
-
-
 python manage.py makemigrations
 python manage.py migrate
 

@@ -1,5 +1,5 @@
-
 # videos/apps.py
+
 from django.apps import AppConfig
 
 
@@ -12,4 +12,3 @@ class VideosConfig(AppConfig):
         from . import signals
 
         super().ready()
-

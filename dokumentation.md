@@ -17,6 +17,8 @@ This document provides a detailed overview of the backend components of the Vide
 5. [Database Setup](#database-setup)
 6. [Running Migrations](#running-migrations)
 7. [Testing](#testing)
+    - [Test Overview](#test-overview)
+    - [Test Files](#test-files)
 8. [Troubleshooting](#troubleshooting)
 9. [License](#license)
 
@@ -187,14 +189,44 @@ python manage.py migrate
 Before starting the application, you need to apply the database migrations to set up the necessary tables. Run the following command to apply all migrations:
 
 ```bash
-python manage.py migrate
+python manage.py test
 ```
 
 ## Testing
 
 ```bash
-python manage.py test
+pytest --cov=. --cov-report=term-missing -v
+
 ```
+
+## Test Overview
+
+Here are the test files that you can explore and execute:
+
+- **Test User Models**: Tests for user creation, password mismatch validation, and authentication mechanisms.
+- **Test Video Models**: Tests for video file uploads, variants creation, and video-related functionality.
+- **Test API Views**: Tests for various API views including video listing, progress tracking, and trailer management.
+- **Test Signals**: Tests for background tasks related to video processing and file cleanup.
+
+### Test Files
+
+- [**test_users_models.py**](#test-users) – Tests for user models, registration, and login.
+- [**test_users_serializers.py**](#test-users-serializers) – Tests for user registration and login serializers.
+- [**test_users_utils.py**](#test-users-utils) – Tests for utility functions like email validation or token handling.
+- [**test_users_activate_views.py**](#test-users-activate-views) – Tests for views handling user activation and account validation.
+- [**test_users_admin.py**](#test-users-admin) – Tests for the Django admin interface related to users.
+- [**test_videos_admin.py**](#test-videos-admin) – Tests for the Django admin interface related to videos.
+- [**test_videos_views.py**](#test-videos-views) – Tests for API views related to videos, progress, etc.
+- [**test_videos_signals.py**](#test-videos-signals) – Tests for signals related to video processing.
+- [**test_videos_tasks.py**](#test-videos-tasks) – Tests for background tasks like video transcoding.
+- [**test_videos_serializers.py**](#test-videos-serializers) – Tests for serializers used in video and user APIs.
+- [**test_videos_models.py**](#test-videos-models) – Tests for Django models (e.g., WatchProgress, Video).
+- [**conftest.py**](#conftest) – Configuration for fixtures and shared test setups.
+- [**pytest.ini**](#pytest-ini) – Pytest configuration file for test settings.
+- [**settings_test.py**](#settings-test) – Test-specific settings used during testing.
+
+You can click on the links to scroll directly to each section.
+
 
 ## Troubleshooting
 

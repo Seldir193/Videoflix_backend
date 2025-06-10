@@ -36,6 +36,7 @@ videoflix-backend/
 │   ├── email.py
 │   ├── __init__.py
 │   └── …                    # models, signals …
+├── tests/
 ├── users/
 │   ├── admin.py
 │   ├── models.py
@@ -62,17 +63,20 @@ videoflix-backend/
 │       └── password_reset.txt
 ├── video_backend/                 # Django project root
 │   ├── settings.py
+│   ├── settings_test.py
 │   ├── urls.py
 │   └── wsgi.py / asgi.py
 ├── env/                       # (optional) local virtual-env
 ├── Dockerfile.backend
 ├── backend.entrypoint.sh
+├── conftest.py
 ├── .dockerignore
 ├── .env              (prod variables)
 ├── .env.template     (sample)
 ├── docker-compose.yml
 ├── requirements.txt
 ├── manage.py
+├── pytest.ini
 └── README.md
 
 ```

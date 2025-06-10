@@ -1,12 +1,15 @@
 from __future__ import annotations
+
 from django.conf import settings
 from rest_framework import serializers
+
 from .models import Video, WatchProgress
 
 __all__ = [
     "VideoSerializer",
     "ProgressSerializer",
 ]
+
 
 class VideoSerializer(serializers.ModelSerializer):
     video_file_url = serializers.SerializerMethodField()
@@ -15,26 +18,24 @@ class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         exclude = (
-            "title_de", "title_en",
-            "description_de", "description_en",
+            "title_de",
+            "title_en",
+            "description_de",
+            "description_en",
         )
-
         read_only_fields = (
             "source_url",
             "source_variants",
             "thumb",
             "hero_frame",
         )
-
         extra_kwargs = {
             "video_file": {"required": False, "allow_null": True},
-            "url":        {"required": False, "allow_blank": True},
+            "url": {"required": False, "allow_blank": True},
         }
-
 
     def to_representation(self, instance: Video):
         rep = super().to_representation(instance)
-
         request = self.context.get("request")
         lang = getattr(request, "LANGUAGE_CODE", "de") or "de"
 
@@ -49,10 +50,8 @@ class VideoSerializer(serializers.ModelSerializer):
             or getattr(instance, "description_de", None)
             or getattr(instance, "description_en", None)
             or instance.description
-        ) 
-
+        )
         return rep
-
 
     def get_video_file_url(self, obj: Video) -> str | None:
         request = self.context.get("request")
@@ -72,9 +71,7 @@ class VideoSerializer(serializers.ModelSerializer):
         if not (request and obj.source_variants):
             return []
 
-        ordered = sorted(obj.source_variants,
-                         key=lambda v: v["height"], reverse=True)
-
+        ordered = sorted(obj.source_variants, key=lambda v: v["height"], reverse=True)
         return [
             {
                 "src": request.build_absolute_uri(settings.MEDIA_URL + v["path"]),
@@ -87,7 +84,8 @@ class VideoSerializer(serializers.ModelSerializer):
     def validate(self, data: dict) -> dict:
         if not data.get("url") and not data.get("video_file"):
             raise serializers.ValidationError(
-                "Bitte entweder eine externe URL oder eine Videodatei hochladen.")
+                "Bitte entweder eine externe URL oder eine Videodatei hochladen."
+            )
         return data
 
 
