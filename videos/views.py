@@ -11,6 +11,8 @@ from rest_framework.generics import ListAPIView
 from .models import Video, WatchProgress
 from .serializers import ProgressSerializer, VideoSerializer
 from videos.utils import update_watch_progress
+from rest_framework.decorators import action
+
 
 __all__ = [
     "VideoViewSet",
@@ -24,16 +26,18 @@ CACHE_TTL: int = getattr(settings, "CACHE_TTL", 60 * 15)
 @method_decorator(cache_page(CACHE_TTL), name="retrieve")
 class VideoViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
+    permission_classes = [IsAuthenticated]
+    
 
     def get_queryset(self):
         if self.action == "list":
             return Video.objects.filter(is_trailer=False)
         return Video.objects.all()
 
-    def get_permissions(self):
-        if self.action in ("list", "retrieve"):
-            return [permissions.AllowAny()]
-        return [permissions.IsAuthenticated()]
+    #def get_permissions(self):
+        #if self.action in ("list", "retrieve"):
+            #return [permissions.AllowAny()]
+        #return [permissions.IsAuthenticated()]
 
 
 class ProgressViewSet(viewsets.ModelViewSet):
@@ -42,6 +46,17 @@ class ProgressViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return WatchProgress.objects.filter(user=self.request.user)
+    
+    @action(detail=False, methods=["get"])
+    def get_progress(self, request, *args, **kwargs):
+        video_id = request.query_params.get("video")
+        progress = WatchProgress.objects.filter(user=request.user, video_id=video_id).first()
+        
+        if progress:
+            return Response({"position": progress.position, "duration": progress.duration}, status=200)
+        
+        return Response({"position": 0, "duration": 0}, status=200)
+
 
     def create(self, request, *args, **kwargs):
         obj = update_watch_progress(
@@ -59,7 +74,6 @@ class TrailerList(ListAPIView):
     serializer_class = VideoSerializer
     queryset = Video.objects.filter(is_trailer=True, duration__lte=240)
     permission_classes = [IsAuthenticated]
-
 
 
 

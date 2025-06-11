@@ -40,6 +40,8 @@ else:
     print(f"Superuser '{username}' already exists.")
 EOF
 
+# Starte den RQ Worker im Hintergrund
 python manage.py rqworker default &
 
-exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:8000
+#exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:8000
+exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:8000 --workers=3 --worker-class=gevent --timeout=300 --keep-alive=5 --no-sendfile

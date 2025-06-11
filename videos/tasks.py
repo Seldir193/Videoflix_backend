@@ -10,7 +10,6 @@ from django_rq import enqueue
 
 from .models import Video
 
-
 RENDITIONS: Final[list[tuple[str, int, str]]] = [
     ("1080p", 1080, "5000k"),
     ("720p", 720, "3000k"),
