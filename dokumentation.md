@@ -15,7 +15,7 @@ This document provides a detailed overview of the backend components of the Vide
    - [Tasks](#tasks)
    - [Media & Static Files](#media--static-files)
 4. [Environment Variables](#environment-variables)
-5. [Creating SECRET_KEY](#creating-a-secret-key)
+5. [Creating a SECRET_KEY](#creating-a-secret-key)
 6. [Database Setup](#database-setup)
 7. [Running Migrations](#running-migrations)
 8. [Testing](#testing)
@@ -232,7 +232,7 @@ You can find a sample `.env` file in `.env.template`.
 
 **Important**: You must generate a unique `SECRET_KEY` for your project.
 
-### Creating SECRET_KEY
+## Creating a SECRET_KEY for Django
 
 To generate a secure `SECRET_KEY` for your project:
 
