@@ -116,27 +116,28 @@ To set up the backend with Docker, follow these steps:
    docker compose up --build
 ```
 
+3. **Start already built containers**:
    If the containers have already been built and you just want to start them, use:
 
 ```bash
    docker compose up
 ```
 
-3. **After starting the containers, run the database migrations**:
+4. **After starting the containers, run the database migrations**:
    Apply database migrations to set up the database schema.
 
 ```bash
    docker compose exec web python manage.py migrate
 ```
 
-4. **Create a superuser to access the Django admin panel**:
+5. **Create a superuser to access the Django admin panel**:
    You'll be prompted to provide a username, email, and password for the superuser.
 
 ```bash
    docker compose exec web python manage.py createsuperuser
 ```
 
-5. **View logs to ensure everything is running correctly**:
+6. **View logs to ensure everything is running correctly**:
    Use the following command to view logs for the web container and ensure everything is working as expected.
 
 ```bash
