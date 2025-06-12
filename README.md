@@ -22,7 +22,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 2. [Backend – local setup (Windows CMD)](#backend--local-setup-windows-cmd)
 3. [Docker Stacks](#docker-stacks)
 4. [Production stack](#production-stack)
-   1. [Additional Notes](#additional-notes)
+   - [Additional Notes](#additional-notes)
 5. [Port Hints](#port-hints)
 6. [Deployment Tips](#deployment-tips)
 7. [License](#license)
