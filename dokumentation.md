@@ -8,6 +8,7 @@ This document provides a detailed overview of the backend components of the Vide
 2. [Backend Setup](#backend-setup)
    1. [Local Setup](#local-setup)
    2. [Docker Setup](#docker-setup)
+   3. [Additional Notes](#additional-notes)
 3. [Backend Components](#backend-components)
    1. [Users](#users)
    2. [Videos](#videos)
@@ -46,43 +47,52 @@ Videoflix is a full-stack Netflix clone that allows users to watch and stream vi
 
 If you want to set up the backend locally without using Docker, follow the steps below:
 
-1. Clone the repository:
+1. **Clone the repository**:
+   Clone the project to your local machine.
 
-   ```bash
+```bash
    git clone https://github.com/Seldir193/Videoflix_backend.git
    cd Videoflix-backend
-   ```
+```
 
-2. Create and activate a virtual environment:
+2. **Create and activate a virtual environment**:
+   Create and activate a virtual environment to isolate dependencies.
 
-   ```bash
+```bash
    python -m venv .venv
    .\.venv\Scripts\activate   # On Windows
-   ```
+```
 
-3. Install the required dependencies:
+3. **Install the required dependencies**:
+   Install all required dependencies listed in requirements.txt.
 
-   ```bash
+```bash
    pip install --no-cache-dir -r requirements.txt
-   ```
+```
 
-4. Copy the .env.template file and rename it to .env:
+4. **Copy the .env.template file and rename it to .env**:
+   The .env file contains environment variables for database configuration, SMTP settings, and more.
+   Make sure to adjust the values in the .env file to match your local setup (e.g., database, SMTP).
 
-   ```bash
+```bash
    copy .env.template .env   # On Windows
-   ```
+```
 
-5. Run migrations to set up the database schema:
+Note: After renaming, open the .env file and make sure to set the correct values for your environment, such as the database connection and SMTP settings.
 
-   ```bash
+5. **Run migrations to set up the database schema**:
+   Apply database migrations.
+
+```bash
    python manage.py migrate
-   ```
+```
 
-6. Start the development server:
+6. **Start the development server**:
+   Start the Django development server to run the API locally.
 
-   ```bash
+```bash
    python manage.py runserver 8000
-   ```
+```
 
 Your backend API will now be available at **http://localhost:8000**.
 
@@ -92,37 +102,51 @@ Your backend API will now be available at **http://localhost:8000**.
 
 To set up the backend with Docker, follow these steps:
 
-1. Copy the .env.template file and rename it to .env:
+1. **Copy the .env.template file and rename it to .env**:
+   Before starting Docker, make sure to copy and rename the .env.template file to .env. This file contains important environment variables for configuring the database, SMTP, and superuser credentials. Make sure all the values are set correctly before proceeding.
 
 ```bash
- copy .env.template .env   # On Windows
+   copy .env.template .env   # On Windows
 ```
 
-2. Build and start the Docker containers:
+2. **Build and start the Docker containers**:
+   Build the containers and start the services defined in the docker-compose.yml file.
 
-   ```bash
+```bash
    docker compose up --build
-   ```
+```
 
-3. After starting the containers, run the database migrations:
+3. **After starting the containers, run the database migrations**:
+   Apply database migrations to set up the database schema.
 
-   ```bash
+```bash
    docker compose exec web python manage.py migrate
-   ```
+```
 
-4. Create a superuser to access the Django admin panel:
+4. **Create a superuser to access the Django admin panel**:
+   You'll be prompted to provide a username, email, and password for the superuser.
 
-   ```bash
+```bash
    docker compose exec web python manage.py createsuperuser
-   ```
+```
 
-5. View logs to ensure everything is running correctly:
+5. **View logs to ensure everything is running correctly**:
+   Use the following command to view logs for the web container and ensure everything is working as expected.
 
-   ```bash
+```bash
    docker compose logs -f web
-   ```
+```
 
----
+### Additional Notes:
+
+1. **.env File**:
+   Be sure to correctly configure the .env file after copying it from .env.template. This file contains essential environment variables like database credentials, SMTP settings, and superuser credentials.
+
+2. **Docker**:
+   Docker will automatically build and start all necessary containers. Ensure that all the environment variables are set correctly in the .env file before running the docker compose up --build command.
+
+3. **Database and Redis**:
+   If you're running the application locally without Docker, make sure that PostgreSQL and Redis are running on the expected ports, or use Docker to start them up.
 
 ## Backend Components
 
@@ -194,7 +218,6 @@ Run migrations to apply the database schema:
 
 ```bash
 python manage.py migrate
-
 ```
 
 ## Running Migrations
@@ -209,7 +232,6 @@ python manage.py test
 
 ```bash
 pytest --cov=. --cov-report=term-missing -v
-
 ```
 
 ## Test Overview

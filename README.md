@@ -83,7 +83,7 @@ videoflix-backend/
 
 ## Backend – Local Setup (Windows CMD)
 
-This setup is only needed if you **don’t** want to use Docker right now.  
+This setup is only needed if you don’t want to use Docker right now.
 It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).
 
 ### Steps:
@@ -105,6 +105,7 @@ cd Videoflix-backend
 ```
 
 3. **Create and activate a virtual environment**:
+   This creates and activates a virtual environment to isolate dependencies.
 
 ```cmd
 python -m venv .venv
@@ -112,18 +113,21 @@ python -m venv .venv
 ```
 
 4. **install dependencies**
+   Install all required dependencies listed in requirements.txt.
 
 ```cmd
 pip install --no-cache-dir -r requirements.txt
 ```
 
 5. **Copy the .env.template file and rename it to .env**:
+   The .env file contains environment variables necessary for database configuration, SMTP settings, and other services. Make sure to adjust the values accordingly (e.g., SMTP, database).
 
 ```cmd
 copy .env.template .env   # On Windows
 ```
 
 6. **dev server (expects PostgreSQL at localhost:5432 or via Docker)**
+   Run the database migrations and start the Django development server.
 
 ```cmd
 python manage.py migrate
@@ -132,19 +136,42 @@ python manage.py runserver 8000
 
 ## Docker-Stacks
 
-```bash
+1. **Copy the .env.template file and rename it to .env**:
+   Before running Docker, make sure to copy and rename the .env.template file to .env. This file contains essential environment variables such as database credentials, SMTP settings, and superuser data. Make sure the values are properly configured before proceeding.
 
+```bash
+copy .env.template .env   # On Windows
+```
+
+2. **Build and start the Docker containers**:
+   This command will build the Docker containers and start all services defined in your docker-compose.yml file.
+
+```bash
 docker compose up --build
 
 ```
 
 ## Production Stack
 
+1. **Run database migrations**:
+   Once the containers are up, apply the migrations to set up the database schema.
+
 ```bash
 docker compose exec web python manage.py migrate
-docker compose exec web python manage.py createsuperuser
-docker compose logs -f web
+```
 
+2. **Create a superuser to access the Django admin panel**:
+   You will be prompted to provide a username, email, and password for the superuser.
+
+```bash
+docker compose exec web python manage.py createsuperuser
+```
+
+3. **View logs to ensure everything is running correctly**:
+   This will show the logs for the web container. You can use this to monitor for any issues.
+
+```bash
+docker compose logs -f web
 ```
 
 ## Port Hints
