@@ -47,7 +47,7 @@ Videoflix is a full-stack Netflix clone that allows users to watch and stream vi
 
 If you want to set up the backend locally without using Docker, follow the steps below:
 
-1. **Clone the repository**:<br>
+1. **Clone the repository**:
    Clone the project to your local machine.
 
 ```bash
