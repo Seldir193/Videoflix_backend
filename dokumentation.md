@@ -256,7 +256,7 @@ Here are the test files that you can explore and execute:
 - [**test_users_models.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_models.py) – Tests for user models, registration, and login.
 - [**test_users_serializers.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_serializers.py) – Tests for user registration and login serializers.
 - [**test_users_utils.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_utils.py) – Tests for utility functions like email validation or token handling.
-- [**test_users_activate_views.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_activate_views.py) – Tests for views handling user activation and account validation.
+- [**test_users_activate_views.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_activate_view.py) – Tests for views handling user activation and account validation.
 - [**test_users_admin.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_admin.py) – Tests for the Django admin interface related to users.
 - [**test_videos_admin.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_videos_admin.py) – Tests for the Django admin interface related to videos.
 - [**test_videos_views.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_videos_views.py) – Tests for API views related to videos, progress, etc.
@@ -264,9 +264,9 @@ Here are the test files that you can explore and execute:
 - [**test_videos_tasks.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_videos_tasks.py) – Tests for background tasks like video transcoding.
 - [**test_videos_serializers.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_videos_serializers.py) – Tests for serializers used in video and user APIs.
 - [**test_videos_models.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_videos_models.py) – Tests for Django models (e.g., WatchProgress, Video).
-- [**conftest.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/conftest.py) – Configuration for fixtures and shared test setups.
+- [**conftest.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/conftest.py) – Configuration for fixtures and shared test setups.
 - [**pytest.ini**](https://github.com/Seldir193/Videoflix_backend/blob/main/pytest.ini) – Pytest configuration file for test settings.
-- [**settings_test.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/settings_test.py) – Test-specific settings used during testing.
+- [**settings_test.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/video_backend/settings_test.py) – Test-specific settings used during testing.
 
 You can click on the links to scroll directly to each section.
 
