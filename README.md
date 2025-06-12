@@ -86,7 +86,7 @@ videoflix-backend/
 
 This setup is only needed if you don’t want to use Docker right now.  
 It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).  
-For detailed instructions, refer to the [**Backend Documentation**](documentation/backend-setup.md#local-setup).
+For detailed instructions, refer to the [**Backend Documentation**](dokumentation.md#backend-setup).
 
 ### Steps:
 
