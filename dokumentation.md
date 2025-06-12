@@ -109,11 +109,17 @@ To set up the backend with Docker, follow these steps:
    copy .env.template .env   # On Windows
 ```
 
-2. **Build and start the Docker containers**:
-   Build the containers and start the services defined in the docker-compose.yml file.
+2. **Build and start the Docker containers**:  
+   To build the containers and start the services defined in your `docker-compose.yml` file (including any changes to Dockerfiles or dependencies), run:
 
 ```bash
    docker compose up --build
+```
+
+If the containers have already been built and you just want to start them, use:
+
+```bash
+   docker compose up
 ```
 
 3. **After starting the containers, run the database migrations**:
