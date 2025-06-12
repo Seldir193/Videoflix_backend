@@ -12,7 +12,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 | **Database**       | PostgreSQL 16                                                  |
 | **Queue / Cache**  | Redis 6 · django-rq · django-redis                             |
 | **Extras**         | django-modeltranslation · django-import-export · debug-toolbar |
-| **Static / Media** | WhiteNoise (dev + prod)                    |
+| **Static / Media** | WhiteNoise (dev + prod)                                        |
 
 ---
 
@@ -20,7 +20,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 
 1. [Project Structure](#project-structure)
 2. [Backend – local setup (Windows CMD)](#backend--local-setup-windows-cmd)
-3. [Docker Stacks](#docker-stacks)  
+3. [Docker Stacks](#docker-stacks)
 4. [Production stack](#production-stack)
 5. [Port Hints](#port-hints)
 6. [Deployment Tips](#deployment-tips)
@@ -81,32 +81,53 @@ videoflix-backend/
 
 ```
 
-## Backend – local setup (Windows CMD)
+## Backend – Local Setup (Windows CMD)
 
-Only needed if you **don’t** want Docker right now  
-(e.g. quick inspection, unit-test run, or VS Code debugging).
+This setup is only needed if you **don’t** want to use Docker right now.  
+It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).
+
+### Steps:
+
+1. **(Optional) Clean an old checkout**:
+   If you've already cloned the repo previously, clean it before proceeding.
 
 ```cmd
+ cd %USERPROFILE%
+ rmdir /S /Q Videoflix-backend  2>NUL
+```
 
-:: 0  (optional) clean an old checkout
-cd %USERPROFILE%
-rmdir /S /Q Videoflix-backend  2>NUL
+2. **Clone the repository**:
+   Clone the project to your local machine.
 
-:: 1  clone the repo
+```cmd
 git clone https://github.com/Seldir193/Videoflix_backend.git  Videoflix-backend
 cd Videoflix-backend
+```
 
-:: 2  create & activate a venv
+3. **Create and activate a virtual environment**:
+
+```cmd
 python -m venv .venv
 .\.venv\Scripts\activate
+```
 
-:: 3  install dependencies
+4. **install dependencies**
+
+```cmd
 pip install --no-cache-dir -r requirements.txt
+```
 
-:: 4  dev server (expects PostgreSQL at localhost:5432 or via Docker)
+5. **Copy the .env.template file and rename it to .env**:
+
+```cmd
+copy .env.template .env   # On Windows
+```
+
+6. **dev server (expects PostgreSQL at localhost:5432 or via Docker)**
+
+```cmd
 python manage.py migrate
 python manage.py runserver 8000
-
 ```
 
 ## Docker-Stacks
@@ -116,6 +137,7 @@ python manage.py runserver 8000
 docker compose up --build
 
 ```
+
 ## Production Stack
 
 ```bash
@@ -126,13 +148,14 @@ docker compose logs -f web
 ```
 
 ## Port Hints
- * **Development stack** – `web` with `.env`  
-   API available at **http://localhost:8000**
+
+- **Development stack** – `web` with `.env`  
+  API available at **http://localhost:8000**
 
 ## Deployment Tips
 
-*Example: obtain a free Let’s Encrypt TLS certificate for an Nginx-based VPS
-running Ubuntu/Debian.*
+_Example: obtain a free Let’s Encrypt TLS certificate for an Nginx-based VPS
+running Ubuntu/Debian._
 
 ```bash
 # install Certbot
@@ -143,4 +166,5 @@ sudo certbot --nginx -d videoflix.example.com
 ```
 
 ## License
+
 MIT License • © 2025 Selcuk Kocyigit
