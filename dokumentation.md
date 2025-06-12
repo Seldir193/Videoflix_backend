@@ -15,13 +15,14 @@ This document provides a detailed overview of the backend components of the Vide
    - [Tasks](#tasks)
    - [Media & Static Files](#media--static-files)
 4. [Environment Variables](#environment-variables)
-5. [Database Setup](#database-setup)
-6. [Running Migrations](#running-migrations)
-7. [Testing](#testing)
+5. [Creating a SECRET_KEY](#creating-a-secret-key)
+6. [Database Setup](#database-setup)
+7. [Running Migrations](#running-migrations)
+8. [Testing](#testing)
    - [Test Overview](#test-overview)
    - [Test Files](#test-files)
-8. [Troubleshooting](#troubleshooting)
-9. [License](#license)
+9. [Troubleshooting](#troubleshooting)
+10. [License](#license)
 
 ---
 
@@ -209,10 +210,50 @@ The backend relies on several environment variables for configuration. These var
 - `DB_USER`: PostgreSQL database user
 - `DB_PASSWORD`: PostgreSQL database password
 - `REDIS_URL`: URL for Redis instance
+- **For Docker users**:
+  - **DB_HOST=db**: When using Docker, use the container name `db` for PostgreSQL (as defined in `docker-compose.yml`).
+  - **DB_HOST=localhost**: When running PostgreSQL locally, use `localhost` as the host.
+- Redis connection:
+  - **REDIS_HOST=redis**: When using Docker, use the container name `redis` for Redis.
+  - **REDIS_HOST=localhost**: When running Redis locally, use `localhost` as the host.
+- `EMAIL_BACKEND`: Email backend used for sending emails
+  - **For development**, use the `console.EmailBackend` to log emails to the console:
+    ```bash
+    EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+    ```
+  - **For production**, use your real SMTP service (e.g., SendGrid, SMTP server):
+    ```bash
+    EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+    ```
 
 You can find a sample `.env` file in `.env.template`.
 
 ---
+
+**Important**: You must generate a unique `SECRET_KEY` for your project.
+
+### Creating a `SECRET_KEY` for Django
+
+To generate a secure `SECRET_KEY` for your project:
+
+1. **Open a Python shel**:
+
+```bash
+   python
+```
+
+2. **Run the following Python code to generate the SECRET_KEY**:
+
+```bash
+   from django.core.management.utils import get_random_secret_key
+   print(get_random_secret_key())
+```
+
+3. **Copy the generated key and add it to your .env file as follows**:
+
+```bash
+   SECRET_KEY=your_generated_secret_key
+```
 
 ## Database Setup
 
@@ -250,7 +291,6 @@ Here are the test files that you can explore and execute:
 - **Test API Views**: Tests for various API views including video listing, progress tracking, and trailer management.
 - **Test Signals**: Tests for background tasks related to video processing and file cleanup.
 
-
 ### Test Files
 
 - [**test_users_models.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/tests/test_users_models.py) – Tests for user models, registration, and login.
@@ -269,7 +309,6 @@ Here are the test files that you can explore and execute:
 - [**settings_test.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/video_backend/settings_test.py) – Test-specific settings used during testing.
 
 You can click on the links to scroll directly to each section.
-
 
 ## Troubleshooting
 
