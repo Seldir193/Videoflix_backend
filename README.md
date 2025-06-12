@@ -113,8 +113,6 @@ python manage.py runserver 8000
 
 ```bash
 
-docker compose down -v
-docker system prune -a --volumes  
 docker compose up --build
 
 ```

@@ -34,12 +34,6 @@ class VideoViewSet(viewsets.ModelViewSet):
             return Video.objects.filter(is_trailer=False)
         return Video.objects.all()
 
-    #def get_permissions(self):
-        #if self.action in ("list", "retrieve"):
-            #return [permissions.AllowAny()]
-        #return [permissions.IsAuthenticated()]
-
-
 class ProgressViewSet(viewsets.ModelViewSet):
     serializer_class = ProgressSerializer
     permission_classes = [permissions.IsAuthenticated]
