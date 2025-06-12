@@ -232,7 +232,7 @@ You can find a sample `.env` file in `.env.template`.
 
 **Important**: You must generate a unique `SECRET_KEY` for your project.
 
-### Creating a SECRET_KEY for Django
+## Creating a SECRET_KEY for Django
 
 To generate a secure `SECRET_KEY` for your project:
 
@@ -259,10 +259,11 @@ To generate a secure `SECRET_KEY` for your project:
 
 The backend uses **PostgreSQL 16**. Ensure that PostgreSQL is running either locally or in a Docker container.
 
-1. If using Docker, PostgreSQL should be automatically set up via Docker Compose.
-2. If running PostgreSQL locally, make sure it is configured to listen on `localhost:5432`.
+1. If using Docker, PostgreSQL should be automatically set up via Docker Compose. There’s no need to manually configure the database if you're using Docker, as it will be done by the container when you run `docker compose up --build`.
+   
+2. If running PostgreSQL locally, make sure it is configured to listen on `localhost:5432` (or your custom configuration if applicable).
 
-Run migrations to apply the database schema:
+After starting the containers or running PostgreSQL locally, run migrations to apply the database schema:
 
 ```bash
 python manage.py migrate
