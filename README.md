@@ -22,6 +22,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 2. [Backend – local setup (Windows CMD)](#backend--local-setup-windows-cmd)
 3. [Docker Stacks](#docker-stacks)
 4. [Production stack](#production-stack)
+   1. [Additional Notes](#additional-notes)
 5. [Port Hints](#port-hints)
 6. [Deployment Tips](#deployment-tips)
 7. [License](#license)
@@ -83,8 +84,9 @@ videoflix-backend/
 
 ## Backend – Local Setup (Windows CMD)
 
-This setup is only needed if you don’t want to use Docker right now.
-It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).
+This setup is only needed if you don’t want to use Docker right now.  
+It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).  
+For detailed instructions, refer to the [**Backend Documentation**](documentation/index.md#local-setup).
 
 ### Steps:
 
@@ -135,16 +137,15 @@ python manage.py runserver 8000
 ```
 
 ## Docker-Stacks
+For detailed steps, see the Docker Setup Documentation.
 
 1. **Copy the .env.template file and rename it to .env**:
-   Before running Docker, make sure to copy and rename the .env.template file to .env. This file contains essential environment variables such as database credentials, SMTP settings, and superuser data. Make sure the values are properly configured before proceeding.
 
 ```bash
 copy .env.template .env   # On Windows
 ```
 
 2. **Build and start the Docker containers**:
-   This command will build the Docker containers and start all services defined in your docker-compose.yml file.
 
 ```bash
 docker compose up --build
@@ -154,25 +155,25 @@ docker compose up --build
 ## Production Stack
 
 1. **Run database migrations**:
-   Once the containers are up, apply the migrations to set up the database schema.
 
 ```bash
 docker compose exec web python manage.py migrate
 ```
 
 2. **Create a superuser to access the Django admin panel**:
-   You will be prompted to provide a username, email, and password for the superuser.
 
 ```bash
 docker compose exec web python manage.py createsuperuser
 ```
 
 3. **View logs to ensure everything is running correctly**:
-   This will show the logs for the web container. You can use this to monitor for any issues.
 
 ```bash
 docker compose logs -f web
 ```
+
+### Additional Notes
+For more detailed steps on setting up and configuring your environment, please refer to the full documentation.
 
 ## Port Hints
 
