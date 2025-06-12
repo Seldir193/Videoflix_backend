@@ -86,7 +86,7 @@ videoflix-backend/
 
 This setup is only needed if you don’t want to use Docker right now.  
 It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).  
-For detailed instructions, refer to the [**Backend Documentation**](dokumentation.md#backend-setup).
+For detailed instructions, refer to the [**Local Documentation**](dokumentation.md#local-setup).
 
 ### Steps:
 
@@ -122,7 +122,7 @@ pip install --no-cache-dir -r requirements.txt
 ```
 
 5. **Copy the .env.template file and rename it to .env**:
-   The .env file contains environment variables necessary for database configuration, SMTP settings, and other services. Make sure to adjust the values accordingly (e.g., SMTP, database).
+   Adjust the values in the .env file to match your local setup (e.g., database, SMTP).
 
 ```cmd
 copy .env.template .env   # On Windows
@@ -137,7 +137,7 @@ python manage.py runserver 8000
 ```
 
 ## Docker-Stacks
-For detailed steps, see the Docker Setup Documentation.
+For detailed steps, see the [**Docker Setup Documentation**](dokumentation.md#docker-setup).
 
 1. **Copy the .env.template file and rename it to .env**:
 
