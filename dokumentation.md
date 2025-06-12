@@ -232,7 +232,7 @@ You can find a sample `.env` file in `.env.template`.
 
 **Important**: You must generate a unique `SECRET_KEY` for your project.
 
-### Creating a `SECRET_KEY` for Django
+### Creating a SECRET_KEY for Django
 
 To generate a secure `SECRET_KEY` for your project:
 
