@@ -137,6 +137,7 @@ python manage.py runserver 8000
 ```
 
 ## Docker-Stacks
+
 For detailed steps, see the [**Docker Setup Documentation**](dokumentation.md#docker-setup).
 
 1. **Copy the .env.template file and rename it to .env**:
@@ -173,6 +174,7 @@ docker compose logs -f web
 ```
 
 ### Additional Notes
+
 For more detailed steps on setting up and configuring your environment, please refer to the full documentation.
 
 ## Port Hints
