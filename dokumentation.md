@@ -6,14 +6,14 @@ This document provides a detailed overview of the backend components of the Vide
 
 1. [Project Overview](#project-overview)
 2. [Backend Setup](#backend-setup)
-   1. [Local Setup](#local-setup)
-   2. [Docker Setup](#docker-setup)
-   3. [Additional Notes](#additional-notes)
+   - [Local Setup](#local-setup)
+   - [Docker Setup](#docker-setup)
+   - [Additional Notes](#additional-notes)
 3. [Backend Components](#backend-components)
-   1. [Users](#users)
-   2. [Videos](#videos)
-   3. [Tasks](#tasks)
-   4. [Media & Static Files](#media--static-files)
+   - [Users](#users)
+   - [Videos](#videos)
+   - [Tasks](#tasks)
+   - [Media & Static Files](#media--static-files)
 4. [Environment Variables](#environment-variables)
 5. [Database Setup](#database-setup)
 6. [Running Migrations](#running-migrations)
@@ -116,7 +116,7 @@ To set up the backend with Docker, follow these steps:
    docker compose up --build
 ```
 
-If the containers have already been built and you just want to start them, use:
+   If the containers have already been built and you just want to start them, use:
 
 ```bash
    docker compose up
