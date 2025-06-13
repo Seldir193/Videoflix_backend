@@ -40,7 +40,8 @@ def create_variants(video_id: int) -> None:
         raise FileNotFoundError("Original‑Upload fehlt – nichts zu tun.")
 
     src = Path(vid.video_file.path)
-    out_dir = Path(settings.MEDIA_ROOT, "videos")
+    #out_dir = Path(settings.MEDIA_ROOT, "videos")
+    out_dir = Path(settings.MEDIA_ROOT, "videos", str(video_id))
     out_dir.mkdir(parents=True, exist_ok=True)
 
     variants: dict[int, str] = {}

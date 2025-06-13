@@ -18,6 +18,7 @@ class VideoResource(resources.ModelResource):
 @admin.register(Video)
 class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
     resource_class = VideoResource
+    exclude = ("source_url",) 
 
     list_display = (
         "id",
@@ -71,7 +72,6 @@ class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
                 ),
                 "fields": (
                     "video_file",
-                    "source_url",
                     "source_variants",
                     "thumb",
                 ),

@@ -22,7 +22,6 @@ __all__ = [
 CACHE_TTL: int = getattr(settings, "CACHE_TTL", 60 * 15)
 
 
-@method_decorator(cache_page(CACHE_TTL), name="list")
 @method_decorator(cache_page(CACHE_TTL), name="retrieve")
 class VideoViewSet(viewsets.ModelViewSet):
     serializer_class = VideoSerializer
@@ -63,13 +62,10 @@ class ProgressViewSet(viewsets.ModelViewSet):
 
     http_method_names = ["get", "post", "head", "options"]
 
-
 class TrailerList(ListAPIView):
     serializer_class = VideoSerializer
     queryset = Video.objects.filter(is_trailer=True, duration__lte=240)
     permission_classes = [IsAuthenticated]
-
-
 
 
 

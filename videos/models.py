@@ -62,7 +62,7 @@ class Video(models.Model):
         validators=[FileExtensionValidator(["mp4", "mov", "mkv", "m4v"])],
     )
 
-    source_url = models.URLField(max_length=500, blank=True, null=True)
+    source_url = models.URLField(max_length=500, blank=True, null=True, editable=False)
     source_variants = models.JSONField(blank=True, null=True)
 
     thumb = models.ImageField(upload_to=thumb_upload_to, blank=True, null=True)
