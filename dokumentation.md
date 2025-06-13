@@ -6,8 +6,8 @@ This document provides a detailed overview of the backend components of the Vide
 
 1. [Project Overview](#project-overview)
 2. [Backend Setup](#backend-setup)
-   - [Local Setup](#local-setup)
    - [Docker Setup](#docker-setup)
+   - [Admin user / super-user](#admin-user--super-user)
    - [Additional Notes](#additional-notes)
 3. [Backend Components](#backend-components)
    - [Users](#users)
@@ -16,13 +16,10 @@ This document provides a detailed overview of the backend components of the Vide
    - [Media & Static Files](#media--static-files)
 4. [Environment Variables](#environment-variables)
 5. [Creating a SECRET KEY](#creating-a-secret-key)
-6. [Database Setup](#database-setup)
-7. [Running Migrations](#running-migrations)
-8. [Testing](#testing)
+6. [Testing](#testing)
    - [Test Overview](#test-overview)
    - [Test Files](#test-files)
-9. [Troubleshooting](#troubleshooting)
-10. [License](#license)
+7. [License](#license)
 
 ---
 
@@ -44,117 +41,83 @@ Videoflix is a full-stack Netflix clone that allows users to watch and stream vi
 
 ## Backend Setup
 
-### Local Setup
-
-If you want to set up the backend locally without using Docker, follow the steps below:
-
-1. **Clone the repository**:
-   Clone the project to your local machine.
-
-```bash
-   git clone https://github.com/Seldir193/Videoflix_backend.git
-   cd Videoflix-backend
-```
-
-2. **Create and activate a virtual environment**:
-   Create and activate a virtual environment to isolate dependencies.
-
-```bash
-   python -m venv .venv
-   .\.venv\Scripts\activate   # On Windows
-```
-
-3. **Install the required dependencies**:
-   Install all required dependencies listed in requirements.txt.
-
-```bash
-   pip install --no-cache-dir -r requirements.txt
-```
-
-4. **Copy the .env.template file and rename it to .env**:
-   The .env file contains environment variables for database configuration, SMTP settings, and more.
-   Make sure to adjust the values in the .env file to match your local setup (e.g., database, SMTP).
-
-```bash
-   copy .env.template .env   # On Windows
-```
-
-Note: After renaming, open the .env file and make sure to set the correct values for your environment, such as the database connection and SMTP settings.
-
-5. **Run migrations to set up the database schema**:
-   Apply database migrations.
-
-```bash
-   python manage.py migrate
-```
-
-6. **Start the development server**:
-   Start the Django development server to run the API locally.
-
-```bash
-   python manage.py runserver 8000
-```
-
-Your backend API will now be available at **http://localhost:8000**.
-
----
-
 ### Docker Setup
 
-To set up the backend with Docker, follow these steps:
-
-1. **Copy the .env.template file and rename it to .env**:
-   Before starting Docker, make sure to copy and rename the .env.template file to .env. This file contains important environment variables for configuring the database, SMTP, and superuser credentials. Make sure all the values are set correctly before proceeding.
+1. **Clone the repository**:
 
 ```bash
-   copy .env.template .env   # On Windows
+    git clone https://github.com/Seldir193/Videoflix_backend.git
+    cd Videoflix_backend 
 ```
 
-2. **Build and start the Docker containers**:  
-   To build the containers and start the services defined in your `docker-compose.yml` file (including any changes to Dockerfiles or dependencies), run:
+2. **Create a `.env` file**
+
+```bash
+   cp .env.template .env
+```
+
+3. **Build & start the stack**
 
 ```bash
    docker compose up --build
 ```
 
-3. **Start already built containers**:
-   If the containers have already been built and you just want to start them, use:
-
-```bash
-   docker compose up
-```
-
-4. **After starting the containers, run the database migrations**:
-   Apply database migrations to set up the database schema.
-
-```bash
-   docker compose exec web python manage.py migrate
-```
-
-5. **Create a superuser to access the Django admin panel**:
-   You'll be prompted to provide a username, email, and password for the superuser.
-
-```bash
-   docker compose exec web python manage.py createsuperuser
-```
-
-6. **View logs to ensure everything is running correctly**:
-   Use the following command to view logs for the web container and ensure everything is working as expected.
+4. **View logs**
 
 ```bash
    docker compose logs -f web
 ```
 
-### Additional Notes:
+5. > Need an admin account?  
+   > See [Admin user / super-user](#admin-user--super-user).
 
-1. **.env File**:
-   Be sure to correctly configure the .env file after copying it from .env.template. This file contains essential environment variables like database credentials, SMTP settings, and superuser credentials.
 
-2. **Docker**:
-   Docker will automatically build and start all necessary containers. Ensure that all the environment variables are set correctly in the .env file before running the docker compose up --build command.
+### Admin user / super-user
 
-3. **Database and Redis**:
-   If you're running the application locally without Docker, make sure that PostgreSQL and Redis are running on the expected ports, or use Docker to start them up.
+The container’s **entrypoint** checks the environment for  
+`DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and  
+`DJANGO_SUPERUSER_PASSWORD`.
+
+| Environment variables present? | What happens on first `docker compose up`? | Manual step needed? |
+| ------------------------------ | ------------------------------------------- | ------------------- |
+| **Yes** (all three)           | Super-user is created automatically.        | **No.** You can log in right away. |
+| **No** (one or more missing)  | No super-user is created.                   | **Yes.** Once the stack is running, execute:<br>`docker compose exec web python manage.py createsuperuser` |
+
+If the user already exists in the database, the entrypoint simply skips the
+creation step—so you can safely keep the code in place without side-effects.
+
+## Production Stack (essentials)
+
+1. **Expose the app**  
+   WhiteNoise already serves static files.  
+   Map the container port to the host as needed, e.g.
+
+```bash
+   docker compose up --build -d            
+   # or
+   docker run -p 80:8000 videoflix:latest
+```
+
+2. **Critical env overrides**  
+```env
+   DEBUG=False
+   ALLOWED_HOSTS=your-domain
+   CSRF_TRUSTED_ORIGINS=https://your-domain
+```
+
+3. **Initial admin user**
+
+If no admin exists yet, create one as shown in the Docker Setup section.
+
+### Additional Notes
+
+- **.env** – edit the copied `.env` before the first `docker compose up`; it
+  holds DB, SMTP and optional `DJANGO_SUPERUSER_*` values.
+
+- **Local Python workflow** – if you run the backend outside Docker,
+  make sure PostgreSQL and Redis are running on their default ports
+  (or start them via Docker).
+
 
 ## Backend Components
 
@@ -203,29 +166,36 @@ python manage.py collectstatic
 
 ## Environment Variables
 
-The backend relies on several environment variables for configuration. These variables can be found in the `.env` file. Some of the key environment variables include:
+All configuration lives in the `.env` file (copy `.env.template` first).  
+Below are the most important keys; the template already contains sensible
+defaults or placeholders.
 
-- `SECRET_KEY`: Django's secret key for cryptographic signing
-- `DB_NAME`: PostgreSQL database name
-- `DB_USER`: PostgreSQL database user
-- `DB_PASSWORD`: PostgreSQL database password
-- `REDIS_URL`: URL for Redis instance
-- **For Docker users**:
-  - **DB_HOST=db**: When using Docker, use the container name `db` for PostgreSQL (as defined in `docker-compose.yml`).
-  - **DB_HOST=localhost**: When running PostgreSQL locally, use `localhost` as the host.
-- Redis connection:
-  - **REDIS_HOST=redis**: When using Docker, use the container name `redis` for Redis.
-  - **REDIS_HOST=localhost**: When running Redis locally, use `localhost` as the host.
-- `EMAIL_BACKEND`: Email backend used for sending emails
-  - **For development**, use the `console.EmailBackend` to log emails to the console:
-    ```bash
-    EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
-    ```
-  - **For production**, use your real SMTP service (e.g., SendGrid, SMTP server):
-    ```bash
-    EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
-    ```
+| Category | Key | Notes |
+|----------|-----|-------|
+| **Core** | `SECRET_KEY` | Always set your own random key (see below). |
+| **PostgreSQL** | `DB_NAME`, `DB_USER`, `DB_PASSWORD` | Credentials for the Django DB. |
+| | `DB_HOST` | `db` when using Docker (service name), `localhost` for bare-metal. |
+| | `DB_PORT` | Usually `5432` |
+| **Redis / django-rq** | `REDIS_HOST` (`redis` in Docker, `localhost` otherwise), `REDIS_PORT`, `REDIS_DB` | Queue & cache backend |
+| **Frontend URLs** | `FRONTEND_PROTOCOL`, `FRONTEND_DOMAIN` | Used in e-mail activation links |
+| **Super-user (optional)** | `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD` | If all three are set, the entry-point creates the admin automatically. |
 
+### E-mail settings
+
+```env
+   # default (dev): log mails to console
+   EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+
+   # switch to SMTP for real mails
+   #EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+   EMAIL_HOST=smtp.example.com
+   EMAIL_PORT=587
+   EMAIL_HOST_USER=your_email@example.com
+   EMAIL_HOST_PASSWORD=your_email_password
+   EMAIL_USE_TLS=True
+   EMAIL_USE_SSL=False
+   DEFAULT_FROM_EMAIL="Videoflix <noreply@example.com>"
+```
 You can find a sample `.env` file in `.env.template`.
 
 ---
@@ -253,28 +223,6 @@ To generate a secure `SECRET_KEY` for your project:
 
 ```bash
    SECRET_KEY=your_generated_secret_key
-```
-
-## Database Setup
-
-The backend uses **PostgreSQL 16**. Ensure that PostgreSQL is running either locally or in a Docker container.
-
-1. If using Docker, PostgreSQL should be automatically set up via Docker Compose. There’s no need to manually configure the database if you're using Docker, as it will be done by the container when you run `docker compose up --build`.
-   
-2. If running PostgreSQL locally, make sure it is configured to listen on `localhost:5432` (or your custom configuration if applicable).
-
-After starting the containers or running PostgreSQL locally, run migrations to apply the database schema:
-
-```bash
-python manage.py migrate
-```
-
-## Running Migrations
-
-Before starting the application, you need to apply the database migrations to set up the necessary tables. Run the following command to apply all migrations:
-
-```bash
-python manage.py test
 ```
 
 ## Testing
@@ -310,24 +258,6 @@ Here are the test files that you can explore and execute:
 - [**settings_test.py**](https://github.com/Seldir193/Videoflix_backend/blob/main/video_backend/settings_test.py) – Test-specific settings used during testing.
 
 You can click on the links to scroll directly to each section.
-
-## Troubleshooting
-
-```bash
-python manage.py collectstatic
-```
-
-Django Admin Access Issues:
-
-```bash
-python manage.py createsuperuser
-```
-
-Redis Queue Not Running:
-
-```bash
-docker compose logs redis
-```
 
 ## License
 

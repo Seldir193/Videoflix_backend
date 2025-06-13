@@ -18,16 +18,46 @@ activation and reset-password emails, and stores progress every 5 seconds.
 
 ## Table of Contents
 
-1. [Project Structure](#project-structure)
-2. [Backend – local setup (Windows CMD)](#backend--local-setup-windows-cmd)
-3. [Docker Stacks](#docker-stacks)
-4. [Production stack](#production-stack)
-   - [Additional Notes](#additional-notes)
+1. [Quick Start](#quick-start-docker--recommended)
+2. [Backend Setup](#backend-setup)
+   - [Docker Setup](#docker-setup)
+   - [Admin user / super-user](dokumentation.md#admin-user--super-user)
+3. [Production](#production)
+4. [Project Structure](#project-structure)
 5. [Port Hints](#port-hints)
-6. [Deployment Tips](#deployment-tips)
-7. [License](#license)
+6. [License](#license)
 
 ---
+
+## Quick Start
+*Docker — recommended*
+
+```bash
+git clone https://github.com/Seldir193/Videoflix_backend.git
+cd Videoflix_backend
+cp .env.template .env
+docker compose up --build -d
+```
+
+## Backend Setup
+
+### Docker Setup
+
+Full procedure & troubleshooting: see the  
+[Docker Setup guide](dokumentation.md#docker-setup).
+
+### Admin user / super-user
+
+How the first admin account is created is described in  
+[the docs → Admin user / super-user](dokumentation.md#admin-user--super-user).
+
+---
+
+## Production
+
+For TLS, reverse-proxy tips or a manual **`createsuperuser`**, check the  
+[Production guide](dokumentation.md#production-stack).
+
 
 ## Project Structure
 
@@ -82,118 +112,11 @@ videoflix-backend/
 
 ```
 
-## Backend – Local Setup (Windows CMD)
-
-This setup is only needed if you don’t want to use Docker right now.  
-It's useful for quick inspections, unit-test runs, or debugging in Visual Studio Code (VS Code).  
-For detailed instructions, refer to the [**Local Documentation**](dokumentation.md#local-setup).
-
-### Steps:
-
-1. **(Optional) Clean an old checkout**:
-   If you've already cloned the repo previously, clean it before proceeding.
-
-```cmd
- cd %USERPROFILE%
- rmdir /S /Q Videoflix-backend  2>NUL
-```
-
-2. **Clone the repository**:
-   Clone the project to your local machine.
-
-```cmd
-git clone https://github.com/Seldir193/Videoflix_backend.git  Videoflix-backend
-cd Videoflix-backend
-```
-
-3. **Create and activate a virtual environment**:
-   This creates and activates a virtual environment to isolate dependencies.
-
-```cmd
-python -m venv .venv
-.\.venv\Scripts\activate
-```
-
-4. **install dependencies**
-   Install all required dependencies listed in requirements.txt.
-
-```cmd
-pip install --no-cache-dir -r requirements.txt
-```
-
-5. **Copy the .env.template file and rename it to .env**:
-   Adjust the values in the .env file to match your local setup (e.g., database, SMTP).
-
-```cmd
-copy .env.template .env   # On Windows
-```
-
-6. **dev server (expects PostgreSQL at localhost:5432 or via Docker)**
-   Run the database migrations and start the Django development server.
-
-```cmd
-python manage.py migrate
-python manage.py runserver 8000
-```
-
-## Docker-Stacks
-
-For detailed steps, see the [**Docker Setup Documentation**](dokumentation.md#docker-setup).
-
-1. **Copy the .env.template file and rename it to .env**:
-
-```bash
-copy .env.template .env   # On Windows
-```
-
-2. **Build and start the Docker containers**:
-
-```bash
-docker compose up --build
-
-```
-
-## Production Stack
-
-1. **Run database migrations**:
-
-```bash
-docker compose exec web python manage.py migrate
-```
-
-2. **Create a superuser to access the Django admin panel**:
-
-```bash
-docker compose exec web python manage.py createsuperuser
-```
-
-3. **View logs to ensure everything is running correctly**:
-
-```bash
-docker compose logs -f web
-```
-
-### Additional Notes
-
-For more detailed steps on setting up and configuring your environment, please refer to the full documentation.
-
 ## Port Hints
 
-- **Development stack** – `web` with `.env`  
-  API available at **http://localhost:8000**
-
-## Deployment Tips
-
-_Example: obtain a free Let’s Encrypt TLS certificate for an Nginx-based VPS
-running Ubuntu/Debian._
-
-```bash
-# install Certbot
-sudo apt update && sudo apt install certbot python3-certbot-nginx
-
-# issue/renew a cert for your domain
-sudo certbot --nginx -d videoflix.example.com
-```
+- **Development / Production** – container **web**  
+  - API   → <http://localhost:8000>  
+  - Admin → <http://localhost:8000/admin>
 
 ## License
 

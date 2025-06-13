@@ -24,7 +24,6 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:4200",
     "http://127.0.0.1:4200",
-    "https://videoflix.selcuk-kocyigit.de",
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -95,8 +94,8 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME", "videoflix_db"),
-        "USER": os.getenv("DB_USER", "vf_user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "selcuk"),
+        "USER": os.getenv("DB_USER", "real_db_user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "very_secret_pw"),
         "HOST": os.getenv("DB_HOST", "db"),
         "PORT": os.getenv("DB_PORT", 5432),
     }
@@ -106,6 +105,7 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
+        # Falls REDIS_LOCATION in .env definiert ist, hat es Vorrang.
         "LOCATION": os.getenv("REDIS_LOCATION", "redis://redis:6379/1"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "video_backend",
@@ -178,16 +178,16 @@ EMAIL_BACKEND = os.getenv(
 )
 
 if EMAIL_BACKEND == "django.core.mail.backends.smtp.EmailBackend":
-    EMAIL_HOST = os.getenv("EMAIL_HOST", "w01f330f.kasserver.com")
+    EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.example.com")
     EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
     EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True").lower() == "true"
     EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "False").lower() == "true"
     DEFAULT_FROM_EMAIL = os.getenv(
-        "DEFAULT_FROM_EMAIL",
-        "Videoflix <noreply@videoflix.selcuk-kocyigit.de>",
-    )
+    "DEFAULT_FROM_EMAIL",
+    "Videoflix <noreply@example.com>",
+)
 
 # === JWT ===
 SIMPLE_JWT = {

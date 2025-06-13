@@ -26,7 +26,7 @@ def hero_upload_to(instance: Video, filename: str) -> str:
 
 class Video(models.Model):
     class Category(models.TextChoices):
-        NEW = "New on Videoflix", _("New on Videoflix")
+        NEW = "Action", _("Action")
         DOCU = "Documentary", _("Documentary")
         DRAMA = "Drama", _("Drama")
         ROM = "Romance", _("Romance")
