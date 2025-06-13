@@ -37,9 +37,9 @@ class Video(models.Model):
     duration = models.PositiveIntegerField(null=True, blank=True)
     is_trailer = models.BooleanField(default=False)
 
-    genre = models.CharField(max_length=100, blank=True)
+    genre = models.CharField(max_length=50, blank=True)
     release = models.DateField(null=True, blank=True)
-    director = models.CharField(max_length=200, blank=True)
+    director = models.CharField(max_length=50, blank=True)
 
     license_type = models.CharField(max_length=50, blank=True)
     license_url = models.URLField(

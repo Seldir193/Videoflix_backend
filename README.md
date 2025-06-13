@@ -18,7 +18,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 
 ## Table of Contents
 
-1. [Quick Start](#quick-start-docker--recommended)
+1. [Quick Start](#quick-start)
 2. [Backend Setup](#backend-setup)
    - [Docker Setup](#docker-setup)
    - [Admin user / super-user](dokumentation.md#admin-user--super-user)
