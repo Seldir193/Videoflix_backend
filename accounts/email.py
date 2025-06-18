@@ -11,7 +11,7 @@ def add_logo_context(request, ctx):
     ctx["domain"] = settings.FRONTEND_DOMAIN
 
     if settings.DEBUG:
-        logo_path = Path(settings.BASE_DIR, "static", "img", "Logo.png")
+        logo_path = Path(settings.BASE_DIR, "static", "img", "logo_vf.png")
         try:
             with open(logo_path, "rb") as f:
                 b64 = base64.b64encode(f.read()).decode()
@@ -19,7 +19,7 @@ def add_logo_context(request, ctx):
         except FileNotFoundError:
             ctx["logo_data_uri"] = ""
     else:
-        ctx["logo_url"] = request.build_absolute_uri(static("img/Logo.png"))
+        ctx["logo_url"] = request.build_absolute_uri(static("img/logo_vf.png"))
 
 
 class CustomActivationEmail(ActivationEmail):

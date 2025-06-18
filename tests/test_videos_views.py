@@ -3,11 +3,14 @@ from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from rest_framework import permissions, status, viewsets
-from rest_framework.response import Response
 from rest_framework.generics import ListAPIView
 from videos.models import Video, WatchProgress
-from videos.serializers import ProgressSerializer, VideoSerializer
-from videos.utils import update_watch_progress
+from videos.serializers import VideoSerializer 
+
+import pytest
+from django.urls import reverse
+from rest_framework.test import APIClient
+
 
 __all__ = [
     "VideoViewSet",
@@ -16,6 +19,18 @@ __all__ = [
 ]
 
 CACHE_TTL: int = getattr(settings, "CACHE_TTL", 60 * 15)  # Default caching time (15 minutes)
+
+
+
+
+@pytest.fixture(autouse=True)
+def ensure_atomic_requests_key(settings):
+    """
+    Django 5.2 erwartet DATABASES['default']['ATOMIC_REQUESTS'].
+    Füge ihn testweise mit False hinzu, falls er fehlt.
+    """
+    db = settings.DATABASES["default"]
+    db.setdefault("ATOMIC_REQUESTS", False)
 
 
 class VideoViewSet(viewsets.ModelViewSet):
@@ -37,29 +52,6 @@ class VideoViewSet(viewsets.ModelViewSet):
         return super().retrieve(request, *args, **kwargs)
 
 
-class ProgressViewSet(viewsets.ModelViewSet):
-    serializer_class = ProgressSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ["get", "post", "head", "options"]
-
-    def get_queryset(self):
-        """Returns the watch progress of the authenticated user."""
-        return WatchProgress.objects.filter(user=self.request.user).select_related("video")
-
-    def create(self, request, *args, **kwargs):
-        """Create or update the watch progress for the video."""
-        obj = update_watch_progress(
-            user=request.user,
-            video_id=request.data.get("video"),
-            position=request.data.get("position", 0),
-            duration=request.data.get("duration", 0),
-        )
-        return Response(
-            self.get_serializer(obj).data,
-            status=status.HTTP_201_CREATED
-        )
-
-
 @method_decorator(cache_page(CACHE_TTL * 2), name="get")  # Longer cache time for trailers
 class TrailerListView(ListAPIView):
     serializer_class = VideoSerializer
@@ -71,3 +63,113 @@ class TrailerListView(ListAPIView):
             is_trailer=True, 
             duration__lte=240
         ).select_related("category").order_by("-created_at")[:10]
+
+
+
+
+
+
+@pytest.fixture
+def user(django_user_model, db):
+    return django_user_model.objects.create_user(
+        email="tester@example.com",
+        password="secret123",
+    )
+
+
+@pytest.fixture
+def api_client(user):
+    """Authentifizierter DRF-Client."""
+    client = APIClient()
+    client.force_authenticate(user=user)
+    return client
+
+
+@pytest.fixture
+def video(db):
+    return Video.objects.create(title="Demo-Clip")
+
+def test_create_progress(api_client, user, video):
+    url = reverse("progress-list")                  
+    payload = {"video": video.id, "position": 12, "duration": 90}
+
+    resp = api_client.post(url, payload, format="json")
+
+    assert resp.status_code == status.HTTP_201_CREATED
+    data = resp.json()
+
+    wp = WatchProgress.objects.get(id=data["id"])
+    assert wp.user == user
+    assert wp.video == video
+    assert wp.position == 12
+    assert wp.duration == 90
+
+
+def test_second_post_updates_same_row(api_client, video):
+    url = reverse("progress-list")
+
+    api_client.post(url, {"video": video.id, "position": 10, "duration": 80},
+                    format="json")
+    api_client.post(url, {"video": video.id, "position": 25, "duration": 80},
+                    format="json")
+
+    wp = WatchProgress.objects.get()
+    assert wp.position == 25
+    assert WatchProgress.objects.count() == 1
+
+def test_get_progress_returns_entry(api_client, user, video):
+    wp = WatchProgress.objects.create(
+        user=user, video=video, position=40, duration=100
+    )
+
+    url = reverse("progress-get-progress")        
+    resp = api_client.get(url, {"video": video.id})
+
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == {
+        "id": wp.id,
+        "position": 40,
+        "duration": 100,
+    }
+
+
+# --- ersetze NUR diese Funktion ---------------------------------------------
+
+def test_get_progress_without_entry_returns_default_zero(api_client, video):
+    """
+    Gibt es noch keinen WatchProgress-Eintrag, muss der View
+    {"position": 0, "duration": 0} mit HTTP 200 liefern.
+    """
+    url  = reverse("progress-get-progress")
+    resp = api_client.get(url, {"video": video.id})
+
+    assert resp.status_code == status.HTTP_200_OK
+    assert resp.json() == {"position": 0, "duration": 0}
+
+
+def test_endpoints_require_auth(video):
+    client = APIClient()
+    url_list = reverse("progress-list")
+    url_get  = reverse("progress-get-progress") + f"?video={video.id}"
+
+    assert client.post(url_list, {}).status_code == status.HTTP_401_UNAUTHORIZED
+    assert client.get(url_get).status_code  == status.HTTP_401_UNAUTHORIZED
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

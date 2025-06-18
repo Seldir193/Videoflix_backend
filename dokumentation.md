@@ -5,27 +5,81 @@ This document provides a detailed overview of the backend components of the Vide
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
-2. [Backend Setup](#backend-setup)
+2. [Project Structure](#project-structure)
+3. [Backend Setup](#backend-setup)
    - [Docker Setup](#docker-setup)
    - [Admin user / super-user](#admin-user--super-user)
    - [Additional Notes](#additional-notes)
-3. [Backend Components](#backend-components)
+4. [Backend Components](#backend-components)
    - [Users](#users)
    - [Videos](#videos)
    - [Tasks](#tasks)
    - [Media & Static Files](#media--static-files)
-4. [Environment Variables](#environment-variables)
-5. [Creating a SECRET KEY](#creating-a-secret-key)
-6. [Testing](#testing)
+5. [Environment Variables](#environment-variables)
+6. [Creating a SECRET KEY](#creating-a-secret-key)
+7. [Testing](#testing)
    - [Test Overview](#test-overview)
    - [Test Files](#test-files)
-7. [License](#license)
+8. [License](#license)
 
 ---
 
 ## Project Overview
 
 Videoflix is a full-stack Netflix clone that allows users to watch and stream videos, manage their user accounts, and store video progress. The backend is built with **Django 4** and uses **PostgreSQL 16** as the database. It includes various features such as email activation, password reset, video transcoding, and the handling of user data.
+
+## Project Structure
+
+```text
+videoflix-backend/
+├── accounts/
+│   ├── email.py
+│   ├── __init__.py
+│   └── …                    # models, signals …
+├── tests/
+├── users/
+│   ├── admin.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── views.py
+│   └── apps.py
+├── videos/
+│   ├── admin.py
+│   ├── models.py
+│   ├── serializers.py
+│   ├── tasks.py               # FFmpeg transcoding
+│   ├── translation.py
+│   └── views.py
+├── media/                     # uploaded originals & renditions
+│   ├── thumbs/
+│   └── videos/                # preview images
+├── static/                    # created by collectstatic (WhiteNoise / Nginx)
+├── staticfiles/
+├── templates/
+│   └── djoser/email/
+│       ├── activation.html
+│       ├── activation.txt
+│       ├── password_reset.html
+│       └── password_reset.txt
+├── video_backend/                 # Django project root
+│   ├── settings.py
+│   ├── settings_test.py
+│   ├── urls.py
+│   └── wsgi.py / asgi.py
+├── env/                       # (optional) local virtual-env
+├── Dockerfile.backend
+├── backend.entrypoint.sh
+├── conftest.py
+├── .dockerignore
+├── .env              (prod variables)
+├── .env.template     (sample)
+├── docker-compose.yml
+├── requirements.txt
+├── manage.py
+├── pytest.ini
+└── README.md
+
+```
 
 ### Core Backend Technologies:
 

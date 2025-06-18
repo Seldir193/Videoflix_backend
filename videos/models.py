@@ -102,9 +102,9 @@ class Video(models.Model):
 
 class WatchProgress(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    video = models.ForeignKey(Video, on_delete=models.CASCADE)
-    position = models.FloatField(default=0)
-    duration = models.FloatField(default=0)
+    video    = models.ForeignKey(Video, on_delete=models.CASCADE)
+    position = models.PositiveIntegerField()   
+    duration = models.PositiveIntegerField()
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:
@@ -114,3 +114,7 @@ class WatchProgress(models.Model):
 
     def __str__(self) -> str:
         return f"{self.user} @ {self.video} → {self.position:.1f}s"
+    
+
+
+

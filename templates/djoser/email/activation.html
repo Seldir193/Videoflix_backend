@@ -26,9 +26,14 @@
                        alt="Videoflix-Logo"
                        width="150"
                        style="display:block;border:0;outline:none;text-decoration:none;">
+                {% elif logo_url %}
+                <img src="{{ logo_data_uri }}"
+                       alt="Videoflix-Logo"
+                       width="150"
+                       style="display:block;border:0;outline:none;text-decoration:none;">
                 {% else %}
                   {# Produktion – Bild über absolute URL laden #}
-                  <img src="{{ protocol }}://{{ domain }}{% static 'img/logo.png' %}"
+                  <img src="{{ protocol }}://{{ domain }}{% static 'img/logo_vf.png' %}"
                        alt="Videoflix-Logo"
                        width="250"
                        height="40"

@@ -61,54 +61,8 @@ For TLS, reverse-proxy tips or a manual **`createsuperuser`**, check the
 
 ## Project Structure
 
-```text
-videoflix-backend/
-├── accounts/
-│   ├── email.py
-│   ├── __init__.py
-│   └── …                    # models, signals …
-├── tests/
-├── users/
-│   ├── admin.py
-│   ├── models.py
-│   ├── serializers.py
-│   ├── views.py
-│   └── apps.py
-├── videos/
-│   ├── admin.py
-│   ├── models.py
-│   ├── serializers.py
-│   ├── tasks.py               # FFmpeg transcoding
-│   ├── translation.py
-│   └── views.py
-├── media/                     # uploaded originals & renditions
-│   ├── thumbs/
-│   └── videos/                # preview images
-├── static/                    # created by collectstatic (WhiteNoise / Nginx)
-├── staticfiles/
-├── templates/
-│   └── djoser/email/
-│       ├── activation.html
-│       ├── activation.txt
-│       ├── password_reset.html
-│       └── password_reset.txt
-├── video_backend/                 # Django project root
-│   ├── settings.py
-│   ├── settings_test.py
-│   ├── urls.py
-│   └── wsgi.py / asgi.py
-├── env/                       # (optional) local virtual-env
-├── Dockerfile.backend
-├── backend.entrypoint.sh
-├── conftest.py
-├── .dockerignore
-├── .env              (prod variables)
-├── .env.template     (sample)
-├── docker-compose.yml
-├── requirements.txt
-├── manage.py
-├── pytest.ini
-└── README.md
+A full folder-and-file breakdown is now available here:  
+[docs/project-structure.md](docs/project-structure.md)
 
 ```
 

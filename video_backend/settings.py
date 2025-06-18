@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
     "django.contrib.sites",
     "videos.apps.VideosConfig",
@@ -47,18 +48,17 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "djoser",
     "corsheaders",
-    "whitenoise",
     "django.template",
     "import_export",
     "debug_toolbar",
     "django_rq",
 ]
 
-# === MIDDLEWARE ===
+
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
-    "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.security.SecurityMiddleware",   
+    "whitenoise.middleware.WhiteNoiseMiddleware",      
+    "corsheaders.middleware.CorsMiddleware",           
     "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -69,7 +69,9 @@ MIDDLEWARE = [
     "django.middleware.locale.LocaleMiddleware",
 ]
 
+
 # === URL/WSGI ===
+
 ROOT_URLCONF = "video_backend.urls"
 WSGI_APPLICATION = "video_backend.wsgi.application"
 
@@ -105,7 +107,6 @@ DATABASES = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        # Falls REDIS_LOCATION in .env definiert ist, hat es Vorrang.
         "LOCATION": os.getenv("REDIS_LOCATION", "redis://redis:6379/1"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "video_backend",
@@ -218,13 +219,21 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-WHITENOISE_ADD_HEADERS = True
 WHITENOISE_MAX_AGE = 86400
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
+WHITENOISE_AUTOREFRESH = True
 
 # === MISC ===
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 INTERNAL_IPS = ["127.0.0.1"]
 CACHE_TTL = 60 * 15
+
+STATICFILES_STORAGE = (
+    "whitenoise.storage.CompressedStaticFilesStorage"  
+)
+
+
+# production only
+#STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+#WHITENOISE_AUTOREFRESH = False
