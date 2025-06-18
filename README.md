@@ -62,7 +62,7 @@ For TLS, reverse-proxy tips or a manual **`createsuperuser`**, check the
 ## Project Structure
 
 A full folder-and-file breakdown is now available here:  
-[docs/project-structure.md](docs/project-structure.md)
+[docs/project-structure.md](dokumentation.md#project-structure)
 
 ```
 
