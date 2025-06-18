@@ -12,19 +12,20 @@ __all__ = [
 ]
 
 
-def video_upload_to(instance: Video, filename: str) -> str:
+def video_upload_to(instance: "Video", filename: str) -> str:
     return f"videos/{instance.id or 'tmp'}/{filename}"
 
 
-def thumb_upload_to(instance: Video, filename: str) -> str:
+def thumb_upload_to(instance: "Video", filename: str) -> str:
     return f"thumbs/{instance.id or 'tmp'}/{filename}"
 
 
-def hero_upload_to(instance: Video, filename: str) -> str:
+def hero_upload_to(instance: "Video", filename: str) -> str:
     return f"thumbs/{instance.id or 'tmp'}/{filename}"
 
 
 class Video(models.Model):
+
     class Category(models.TextChoices):
         NEW = "Action", _("Action")
         DOCU = "Documentary", _("Documentary")
@@ -62,7 +63,12 @@ class Video(models.Model):
         validators=[FileExtensionValidator(["mp4", "mov", "mkv", "m4v"])],
     )
 
-    source_url = models.URLField(max_length=500, blank=True, null=True, editable=False)
+    source_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        editable=False,
+    )
     source_variants = models.JSONField(blank=True, null=True)
 
     thumb = models.ImageField(upload_to=thumb_upload_to, blank=True, null=True)
@@ -74,16 +80,18 @@ class Video(models.Model):
         ordering = ("-created_at",)
         indexes = [models.Index(fields=["created_at"])]
 
-    def clean(self):
+    
+    def clean(self) -> None:
         super().clean()
         if not self.url and not self.video_file:
             raise ValidationError(
                 _("Entweder ein Upload oder eine externe URL ist erforderlich.")
             )
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa: Dunder
         return self.title
 
+   
     @property
     def variants_ready(self) -> bool:
         if not self.source_variants:
@@ -94,16 +102,17 @@ class Video(models.Model):
     def get_variant(self, height: int) -> str | None:
         if not self.source_variants:
             return None
-        for v in self.source_variants:
-            if v["height"] == height:
-                return v["path"]
+        for variant in self.source_variants:
+            if variant["height"] == height:
+                return variant["path"]
         return None
 
 
 class WatchProgress(models.Model):
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    video    = models.ForeignKey(Video, on_delete=models.CASCADE)
-    position = models.PositiveIntegerField()   
+    video = models.ForeignKey(Video, on_delete=models.CASCADE)
+    position = models.PositiveIntegerField()
     duration = models.PositiveIntegerField()
     updated = models.DateTimeField(auto_now=True)
 
@@ -112,9 +121,7 @@ class WatchProgress(models.Model):
         ordering = ("-updated",)
         indexes = [models.Index(fields=["user", "video"])]
 
-    def __str__(self) -> str:
+    def __str__(self) -> str:  # noqa: Dunder
         return f"{self.user} @ {self.video} → {self.position:.1f}s"
-    
-
 
 
