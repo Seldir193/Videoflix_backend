@@ -1,3 +1,5 @@
+"""Helpers for branded auth emails (Videoflix)."""
+
 from djoser.email import ActivationEmail, PasswordResetEmail
 from django.conf import settings
 from django.templatetags.static import static
@@ -6,7 +8,7 @@ from pathlib import Path
 
 
 def add_logo_context(request, ctx):
-    """Ergänzt ctx um logo_data_uri ODER logo_url + protocol/domain."""
+    """Add logo and site info to the template context."""
     ctx["protocol"] = settings.FRONTEND_PROTOCOL
     ctx["domain"] = settings.FRONTEND_DOMAIN
 
@@ -23,22 +25,28 @@ def add_logo_context(request, ctx):
 
 
 class CustomActivationEmail(ActivationEmail):
+    """Activation email with Videoflix branding."""
+
     template_name = "djoser/email/activation.html"
     plain_template_name = "djoser/email/activation.txt"
     subject = "Aktiviere dein Konto bei Videoflix"
 
     def get_context_data(self):
+        """Inject branding context."""
         ctx = super().get_context_data()
         add_logo_context(self.request, ctx)
         return ctx
 
 
 class CustomPasswordResetEmail(PasswordResetEmail):
+    """Password reset email with Videoflix branding."""
+
     template_name = "djoser/email/password_reset.html"
     plain_template_name = "djoser/email/password_reset.txt"
     subject = "Setze dein Videoflix-Passwort zurück"
 
     def get_context_data(self):
+        """Inject branding context."""
         ctx = super().get_context_data()
         add_logo_context(self.request, ctx)
         return ctx

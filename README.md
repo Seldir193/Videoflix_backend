@@ -21,6 +21,7 @@ activation and reset-password emails, and stores progress every 5 seconds.
 1. [Quick Start](#quick-start)
 2. [Backend Setup](#backend-setup)
    - [Docker Setup](#docker-setup)
+   - [E-mail settings](#e-mail-settings)
    - [Admin user / super-user](dokumentation.md#admin-user--super-user)
 3. [Production](#production)
 4. [Project Structure](#project-structure)
@@ -45,6 +46,19 @@ docker compose up --build -d
 
 Full procedure & troubleshooting: see the  
 [Docker Setup guide](dokumentation.md#docker-setup).
+
+### E-mail settings
+
+* **SMTP is the default.**  
+  In `.env.template` the line  
+  `EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend` is already active.
+
+* **Fill in your provider credentials** (`EMAIL_HOST`, `EMAIL_HOST_USER`, …).
+
+* **Local dev shortcut:**  
+  Uncomment the console-backend line to log mails locally instead of sending them.
+
+* **More details:** see [docs → Environment variables](dokumentation.md#environment-variables).
 
 ### Admin user / super-user
 

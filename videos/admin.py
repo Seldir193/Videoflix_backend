@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Admin configuration for the :class:`Video` model."""
+
 from django.contrib import admin
 from django.utils.html import format_html
 from import_export import resources
@@ -10,15 +12,20 @@ from .models import Video
 
 
 class VideoResource(resources.ModelResource):
+    """Resource definition for import‑export of :class:`Video` objects."""
+
     class Meta:
         model = Video
-        exclude = ()
+        exclude: tuple = ()
 
 
 @admin.register(Video)
 class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
+    """Django‑admin interface with translations, import/export and thumbnail preview."""
+
     resource_class = VideoResource
-    exclude = ("source_url",) 
+    # Keep source_url hidden in the UI
+    exclude = ("source_url",)
 
     list_display = (
         "id",
@@ -32,7 +39,11 @@ class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
         "created_at",
         "variants_ready",
     )
-    list_filter = ("category", "genre", "is_trailer")
+    list_filter = (
+        "category",
+        "genre",
+        "is_trailer",
+    )
     search_fields = ("title", "description")
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
@@ -67,8 +78,8 @@ class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
             "Dateien & Pfade",
             {
                 "description": (
-                    "Original hochladen – FFmpeg-Worker erzeugt anschließend "
-                    "automatisch alle MP4-Renditionen + Thumbnails."
+                    "Original hochladen – FFmpeg‑Worker erzeugt anschließend "
+                    "automatisch alle MP4‑Renditionen + Thumbnails."
                 ),
                 "fields": (
                     "video_file",
@@ -79,18 +90,18 @@ class VideoAdmin(TranslationAdmin, ImportExportModelAdmin):
         ),
     )
 
-    @admin.display(boolean=True, description="MP4-Variants")
-    def variants_ready(self, obj: Video) -> bool:
+    @admin.display(boolean=True, description="MP4‑Variants")
+    def variants_ready(self, obj: Video) -> bool:  # noqa: D401
+        """Return *True* if all MP4 renditions exist."""
         return obj.variants_ready
 
     @admin.display(description="Thumbnail")
-    def thumb_tag(self, obj: Video) -> str:
+    def thumb_tag(self, obj: Video) -> str:  # noqa: D401
+        """Render a 48‑pixel thumbnail or an em‑dash."""
         if obj.thumb:
             return format_html(
                 '<img src="{}" style="height:48px;border-radius:4px">',
                 obj.thumb.url,
             )
         return "—"
-
-
 

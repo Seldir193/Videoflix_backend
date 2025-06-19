@@ -1,3 +1,5 @@
+"""Signals for video upload processing and cleanup."""
+
 from __future__ import annotations
 
 import shutil
@@ -14,12 +16,14 @@ from .tasks import create_variants
 
 @receiver(post_save, sender=Video)
 def enqueue_pipeline(sender, instance: Video, created: bool, **_: object) -> None:
+    """Queue FFmpeg variant creation after a new upload."""
     if created and instance.video_file:
         enqueue(create_variants, instance.id, job_timeout=7200)
 
 
 @receiver(post_delete, sender=Video)
 def cleanup_files(sender, instance: Video, **_: object) -> None:
+    """Delete originals, MP4 variants and thumbs after a video is removed."""
     media_root = Path(settings.MEDIA_ROOT)
 
     if instance.video_file and instance.video_file.path:

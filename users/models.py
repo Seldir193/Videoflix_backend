@@ -1,11 +1,16 @@
+"""Custom user model with e‑mail as the primary identifier."""
+
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
 
 
 class CustomUserManager(BaseUserManager):
+    """Manager for :class:`CustomUser`. Uses e‑mail for authentication."""
+
     use_in_migrations = True
 
     def create_user(self, email, password=None, **extra_fields):
+        """Create an inactive user with the given e‑mail and password."""
         if not email:
             raise ValueError("Email is required")
 
@@ -18,6 +23,7 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password=None, **extra_fields):
+        """Create an active staff superuser."""
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
         extra_fields.setdefault("is_active", True)
@@ -26,6 +32,8 @@ class CustomUserManager(BaseUserManager):
 
 
 class CustomUser(AbstractUser):
+    """Videoflix user model. Username is kept for legacy; e‑mail is unique."""
+
     username = models.CharField(
         max_length=150,
         unique=True,
@@ -41,7 +49,7 @@ class CustomUser(AbstractUser):
         default="",
         blank=True,
     )
-    adress = models.CharField(
+    adress = models.CharField(  # note: typo preserved for compatibility
         max_length=150,
         default="",
         blank=True,

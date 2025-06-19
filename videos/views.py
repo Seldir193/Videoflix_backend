@@ -1,3 +1,5 @@
+"""API views for videos and watch‑progress."""
+
 from __future__ import annotations
 
 from django.conf import settings
@@ -21,30 +23,33 @@ __all__ = [
 CACHE_TTL: int = getattr(settings, "CACHE_TTL", 60 * 15)
 
 
-
 @method_decorator(cache_page(CACHE_TTL), name="retrieve")
 class VideoViewSet(viewsets.ModelViewSet):
+    """Video CRUD API (auth required)."""
 
     serializer_class = VideoSerializer
     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
+    def get_queryset(self):  # noqa: D401
+        """Return trailers or full catalog depending on action."""
         if self.action == "list":
             return Video.objects.filter(is_trailer=False)
         return Video.objects.all()
 
 
-
 class ProgressViewSet(viewsets.ModelViewSet):
+    """Track per‑user playback progress."""
 
     serializer_class = ProgressSerializer
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ["get", "post", "head", "options"]
 
-    def get_queryset(self):
+    def get_queryset(self):  # noqa: D401
+        """Return progress entries for current user."""
         return WatchProgress.objects.filter(user=self.request.user)
 
-    def create(self, request, *args, **kwargs):
+    def create(self, request, *args, **kwargs):  # noqa: D401
+        """Upsert progress (called from player)."""
         video_id = request.data.get("video")
         position = request.data.get("position")
         duration = request.data.get("duration")
@@ -60,7 +65,8 @@ class ProgressViewSet(viewsets.ModelViewSet):
         )
 
     @action(detail=False, url_path="get_progress", methods=["get"])
-    def get_progress(self, request):
+    def get_progress(self, request):  # noqa: D401
+        """Return stored progress for given *video* (or zeros)."""
         video_id = request.query_params.get("video")
 
         obj = WatchProgress.objects.filter(
@@ -81,10 +87,8 @@ class ProgressViewSet(viewsets.ModelViewSet):
 
 
 class TrailerList(ListAPIView):
+    """Read‑only list of short trailers (≤ 240 s)."""
 
     serializer_class = VideoSerializer
     queryset = Video.objects.filter(is_trailer=True, duration__lte=240)
     permission_classes = [IsAuthenticated]
-
-
-

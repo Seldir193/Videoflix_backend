@@ -1,3 +1,5 @@
+"""Serializers for custom user registration and representation."""
+
 from djoser.serializers import (
     UserCreateSerializer as BaseCreateSerializer,
     UserSerializer as BaseUserSerializer,
@@ -13,6 +15,8 @@ from users.utils import (
 
 
 class UserCreateSerializer(BaseCreateSerializer):
+    """Serializer used when a user signs up."""
+
     re_password = serializers.CharField(write_only=True)
 
     class Meta(BaseCreateSerializer.Meta):
@@ -45,11 +49,11 @@ class UserCreateSerializer(BaseCreateSerializer):
 
 
 class UserSerializer(BaseUserSerializer):
+    """Public user representation (read‑only)."""
+
     class Meta(BaseUserSerializer.Meta):
         model = CustomUser
         fields = ("id", "email")
-
-
 
 
 

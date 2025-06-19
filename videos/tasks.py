@@ -1,3 +1,5 @@
+"""FFmpeg tasks: create MP4 renditions and thumbnails."""
+
 from __future__ import annotations
 
 import json
@@ -22,6 +24,7 @@ FFPROBE = settings.__dict__.get("FFPROBE_BINARY", "ffprobe")
 
 
 def run(cmd: list[str]) -> None:
+    """Execute *cmd* via ``subprocess`` and abort on non‑zero exit."""
     print("▶", " ".join(cmd))
     cp = subprocess.run(cmd, text=True, capture_output=True)
 
@@ -34,6 +37,7 @@ def run(cmd: list[str]) -> None:
 
 
 def create_variants(video_id: int) -> None:
+    """Generate H.264 MP4 renditions for the given *video_id*."""
     vid = Video.objects.get(pk=video_id)
 
     if not vid.video_file:
@@ -76,6 +80,7 @@ def create_variants(video_id: int) -> None:
 
 
 def extract_thumb(video_id: int, src_path: str) -> None:
+    """Grab 1280 px hero‐frame + 320 px thumbnail and set duration."""
     vid = Video.objects.get(pk=video_id)
 
     hero_dir = Path(settings.MEDIA_ROOT, "hero", str(video_id))

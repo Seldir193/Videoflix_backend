@@ -1,4 +1,4 @@
-# users/admin.py
+"""Admin configuration for the custom user model (Videoflix)."""
 
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
@@ -10,6 +10,8 @@ from .utils import send_activation_email
 
 @admin.register(CustomUser)
 class CustomUserAdmin(UserAdmin):
+    """Django‑admin settings for :class:`CustomUser`."""
+
     add_form = CustomUserCreationForm
     ordering = ("email",)
     list_display = ("email", "is_staff", "is_active")
@@ -19,6 +21,7 @@ class CustomUserAdmin(UserAdmin):
 
     @admin.action(description="Aktivierungs-Mail erneut senden")
     def send_activation(self, request, queryset):
+        """Resend the activation e‑mail to selected inactive users."""
         for user in queryset.filter(is_active=False):
             send_activation_email(user)
 

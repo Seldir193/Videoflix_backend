@@ -237,11 +237,11 @@ defaults or placeholders.
 ### E-mail settings
 
 ```env
-   # default (dev): log mails to console
-   EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
+   # default (prod & staging): real mails via SMTP
+   EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
 
-   # switch to SMTP for real mails
-   #EMAIL_BACKEND=django.core.mail.backends.smtp.EmailBackend
+   # for local development – logs mails to console
+   #EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
    EMAIL_HOST=smtp.example.com
    EMAIL_PORT=587
    EMAIL_HOST_USER=your_email@example.com

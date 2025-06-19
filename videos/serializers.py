@@ -1,3 +1,5 @@
+"""Serializers for video objects and watch progress."""
+
 from __future__ import annotations
 
 from django.conf import settings
@@ -12,6 +14,8 @@ __all__ = [
 
 
 class VideoSerializer(serializers.ModelSerializer):
+    """Serialize a :class:`Video` instance to JSON."""
+
     video_file_url = serializers.SerializerMethodField()
     sources = serializers.SerializerMethodField()
 
@@ -34,7 +38,12 @@ class VideoSerializer(serializers.ModelSerializer):
             "url": {"required": False, "allow_blank": True},
         }
 
-    def to_representation(self, instance: Video):
+    # ------------------------------------------------------------------
+    # Representation helpers
+    # ------------------------------------------------------------------
+
+    def to_representation(self, instance: Video):  # noqa: D401
+        """Return a locale-aware representation."""
         rep = super().to_representation(instance)
         request = self.context.get("request")
         lang = getattr(request, "LANGUAGE_CODE", "de") or "de"
@@ -53,7 +62,12 @@ class VideoSerializer(serializers.ModelSerializer):
         )
         return rep
 
-    def get_video_file_url(self, obj: Video) -> str | None:
+    # ------------------------------------------------------------------
+    # Computed fields
+    # ------------------------------------------------------------------
+
+    def get_video_file_url(self, obj: Video) -> str | None:  # noqa: D401
+        """Absolute URL to the master video source."""
         request = self.context.get("request")
         if not request:
             return None
@@ -66,7 +80,8 @@ class VideoSerializer(serializers.ModelSerializer):
 
         return None
 
-    def get_sources(self, obj: Video) -> list[dict[str, int | str]]:
+    def get_sources(self, obj: Video) -> list[dict[str, int | str]]:  # noqa: D401
+        """List of available MP4 renditions (sorted high→low)."""
         request = self.context.get("request")
         if not (request and obj.source_variants):
             return []
@@ -81,16 +96,29 @@ class VideoSerializer(serializers.ModelSerializer):
             for v in ordered
         ]
 
-    def validate(self, data: dict) -> dict:
+    # ------------------------------------------------------------------
+    # Validation
+    # ------------------------------------------------------------------
+
+    def validate(self, data: dict) -> dict:  # noqa: D401
+        """Require either external URL or uploaded file."""
         if not data.get("url") and not data.get("video_file"):
             raise serializers.ValidationError(
-                "Bitte entweder eine externe URL oder eine Videodatei hochladen."
+                "Bitte entweder eine externe URL oder eine Videodatei hochladen.",
             )
         return data
 
 
 class ProgressSerializer(serializers.ModelSerializer):
+    """Serialize :class:`WatchProgress` records."""
+
     class Meta:
         model = WatchProgress
-        fields = ("id", "video", "position", "duration", "updated")
+        fields = (
+            "id",
+            "video",
+            "position",
+            "duration",
+            "updated",
+        )
         read_only_fields = ("updated",)

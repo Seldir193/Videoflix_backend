@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+"""Video and WatchProgress models."""
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import FileExtensionValidator, URLValidator
@@ -13,18 +15,22 @@ __all__ = [
 
 
 def video_upload_to(instance: "Video", filename: str) -> str:
+    """Path for uploaded original video files."""
     return f"videos/{instance.id or 'tmp'}/{filename}"
 
 
 def thumb_upload_to(instance: "Video", filename: str) -> str:
+    """Path for generated thumbnail images."""
     return f"thumbs/{instance.id or 'tmp'}/{filename}"
 
 
 def hero_upload_to(instance: "Video", filename: str) -> str:
+    """Path for hero-frame images."""
     return f"thumbs/{instance.id or 'tmp'}/{filename}"
 
 
 class Video(models.Model):
+    """Stores a single video and its metadata."""
 
     class Category(models.TextChoices):
         NEW = "Action", _("Action")
@@ -80,8 +86,8 @@ class Video(models.Model):
         ordering = ("-created_at",)
         indexes = [models.Index(fields=["created_at"])]
 
-    
     def clean(self) -> None:
+        """Require either an external URL or an uploaded file."""
         super().clean()
         if not self.url and not self.video_file:
             raise ValidationError(
@@ -89,17 +95,19 @@ class Video(models.Model):
             )
 
     def __str__(self) -> str:  # noqa: Dunder
+        """Return the video title."""
         return self.title
 
-   
     @property
     def variants_ready(self) -> bool:
+        """True when 720 p and 360 p MP4 variants exist."""
         if not self.source_variants:
             return False
         heights = {v["height"] for v in self.source_variants}
         return {720, 360}.issubset(heights)
 
     def get_variant(self, height: int) -> str | None:
+        """Return path of the variant with the requested height, if present."""
         if not self.source_variants:
             return None
         for variant in self.source_variants:
@@ -109,6 +117,7 @@ class Video(models.Model):
 
 
 class WatchProgress(models.Model):
+    """Per-user playback position for a video."""
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     video = models.ForeignKey(Video, on_delete=models.CASCADE)
@@ -122,6 +131,5 @@ class WatchProgress(models.Model):
         indexes = [models.Index(fields=["user", "video"])]
 
     def __str__(self) -> str:  # noqa: Dunder
+        """Readable progress representation."""
         return f"{self.user} @ {self.video} → {self.position:.1f}s"
-
-
