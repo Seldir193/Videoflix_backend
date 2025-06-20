@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        python-version: [3.10, 3.11, 3.12]   # 3.7 entfernt, moderne Versionen hinzugefügt
+        python-version: [3.11, 3.12]   # 3.7 entfernt, moderne Versionen hinzugefügt
 
     steps:
       - uses: actions/checkout@v4
