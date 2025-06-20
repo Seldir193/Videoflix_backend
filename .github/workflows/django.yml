@@ -1,60 +1,59 @@
+# .github/workflows/django.yml
 name: Django CI
 
-on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+on: [push, pull_request]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest            # GitHub-Runner
+  test:
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
-    # 🔑  SECRET_KEY kommt aus dem Repository-Secret  DJANGO_SECRET_KEY
-    env:
-      SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+    services:
+      postgres:
+        image: postgres:14
+        ports: [5432:5432]
+        env:
+          POSTGRES_DB: videoflix_db
+          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
+        options: >-
+          --health-cmd="pg_isready -U ${{ secrets.DB_USER }} -d videoflix_db"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+
+    env:                       # ← alles, was Django braucht
+      SECRET_KEY:   ${{ secrets.DJANGO_SECRET_KEY }}
+      DEBUG:        "False"    # in CI lieber aus
+      DB_NAME:      videoflix_db
+      DB_USER:      ${{ secrets.DB_USER }}
+      DB_PASSWORD:  ${{ secrets.DB_PASSWORD }}
+      DB_HOST:      localhost  # Service-Hostname
+      DB_PORT:      5432
+      REDIS_HOST:   redis      # falls du später Redis ergänzt
+      REDIS_PORT:   6379
+      REDIS_DB:     0
 
     strategy:
       matrix:
         python-version: [ "3.11", "3.12" ]
 
     steps:
-      # Code auschecken
       - uses: actions/checkout@v4
-
-      # Python installieren
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-      # (optional) pip-Cache – beschleunigt Folgeläufe
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-
-      # 🔍 DEBUG-SCHRITT – zeigt, ob SECRET_KEY wirklich ankommt
-      - name: Debug SECRET_KEY
-        run: |
-          echo "✦ Debug SECRET_KEY"
-          echo "Secret length  : ${#SECRET_KEY}"
-          echo "Preview        : ${SECRET_KEY:0:4}****"
-        # eigenes env-Block, um sicher zu sein, dass das Secret hier verfügbar ist
-        env:
-          SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
-
-      # Abhängigkeiten installieren
-      - name: Install dependencies
+      - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # (optional) Migrationen, falls Tests DB brauchen
-      - name: Django migrate
-        run: python manage.py migrate --noinput
+      - name: Wait for Postgres
+        run: |
+          for i in {1..20}; do
+            PGPASSWORD=$DB_PASSWORD psql -h $DB_HOST -U $DB_USER -d $DB_NAME -c '\q' && break
+            echo "Postgres not ready ($i/20)…"; sleep 3
+          done
 
-      # Tests ausführen
-      - name: Run tests
-        run: python manage.py test
+      - run: python manage.py migrate --noinput
+      - run: python manage.py test
+
