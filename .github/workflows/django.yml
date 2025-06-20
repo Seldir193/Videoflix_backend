@@ -38,6 +38,7 @@ jobs:
       # 🔍 DEBUG-SCHRITT – zeigt, ob SECRET_KEY wirklich ankommt
       - name: Debug SECRET_KEY
         run: |
+          echo "✦ Debug SECRET_KEY"
           echo "Secret length  : ${#SECRET_KEY}"
           echo "Preview        : ${SECRET_KEY:0:4}****"
         # eigenes env-Block, um sicher zu sein, dass das Secret hier verfügbar ist
