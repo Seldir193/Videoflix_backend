@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     env:
       SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
 
