@@ -12,7 +12,8 @@ load_dotenv()
 
 # === BASIC SETTINGS ===
 SITE_ID = 1
-DEBUG = True
+#DEBUG = True
+DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","localhost").split(",")
@@ -22,6 +23,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 
 # === CORS ===
 CORS_ALLOWED_ORIGINS = [
+    "CORS_ALLOWED_ORIGINS",
     "http://localhost:4200",
     "http://127.0.0.1:4200",
 ]

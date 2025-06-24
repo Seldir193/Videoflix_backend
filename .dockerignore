@@ -29,4 +29,5 @@ web/static/CACHE
 stats
 Dockerfile
 .env
+.env.* 
 db.sqlite3
