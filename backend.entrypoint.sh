@@ -1,22 +1,34 @@
 #!/bin/sh
 set -e
 
-# --- DATABASE_URL in Host / Port zerlegen ----------------------
+###############################################################################
+# 1) Host/Port aus DATABASE_URL ableiten, wenn DB_HOST | DB_PORT fehlen
+###############################################################################
 if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
-  # Host = Teil hinter '@', bis zum nächsten ':'
-  export DB_HOST=$(echo "$DATABASE_URL" | sed -e 's#.*@##' -e 's#:.*##')
-  # Port = Ziffern zwischen ':' und '/' nach dem Host
-  export DB_PORT=$(echo "$DATABASE_URL" | sed -e 's#.*:@##' -e 's#/.*##')
+  # Beispiel-URL: postgres://user:pw@host:6543/dbname
+  export DB_HOST="$(echo "$DATABASE_URL" | sed -E 's@.+//@;s@:.*@@')"
+  export DB_PORT="$(echo "$DATABASE_URL" | sed -E 's@.+:([0-9]+)/.*@\1@')"
 fi
 
+# Fallbacks, falls immer noch leer
+DB_HOST="${DB_HOST:-localhost}"
+DB_PORT="${DB_PORT:-5432}"
 
-# Warten, bis Postgres bereit ist
+echo "Warte auf PostgreSQL unter $DB_HOST:$DB_PORT …"
+
+###############################################################################
+# 2) postgres readiness-Loop
+###############################################################################
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
   echo "PostgreSQL nicht erreichbar – warte 1 s"
   sleep 1
 done
+echo "PostgreSQL ist bereit – fahre fort …"
 
-echo "PostgreSQL ist bereit - fahre fort..."
+###############################################################################
+# 3) HIER deine weiteren Schritte (collectstatic, migrate, gunicorn, …)
+###############################################################################
+
 
 # Deine originalen Befehle (ohne wait_for_db)
 #python manage.py collectstatic --noinput
