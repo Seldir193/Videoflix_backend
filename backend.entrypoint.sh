@@ -1,11 +1,14 @@
 #!/bin/sh
 set -e
 
-# Extrahiere Host/Port aus DATABASE_URL, falls DB_HOST nicht gesetzt ist
+# --- DATABASE_URL in Host / Port zerlegen ----------------------
 if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
-  export DB_HOST=$(echo "$DATABASE_URL" | awk -F[@:/] '{print $4}')
-  export DB_PORT=$(echo "$DATABASE_URL" | awk -F[@:/] '{print $5}')
+  # Host = Teil hinter '@', bis zum nächsten ':'
+  export DB_HOST=$(echo "$DATABASE_URL" | sed -e 's#.*@##' -e 's#:.*##')
+  # Port = Ziffern zwischen ':' und '/' nach dem Host
+  export DB_PORT=$(echo "$DATABASE_URL" | sed -e 's#.*:@##' -e 's#/.*##')
 fi
+
 
 # Warten, bis Postgres bereit ist
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
