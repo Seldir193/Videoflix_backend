@@ -1,24 +1,25 @@
 #!/bin/sh
 set -e
 
-# ------------------------------------------------------------
-# 1) DB-Host & -Port sauber aus DATABASE_URL herauslösen
-#    BusyBox-Tools, kein "sed -E"
-# ------------------------------------------------------------
+###############################################################################
+# Host / Port aus $DATABASE_URL ermitteln (ohne GNU-sed, ohne -E, ohne Fehler)
+###############################################################################
 if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
-  # Beispiel:  postgres://user:pw@ec2-1-2-3-4.compute.amazonaws.com:6543/dbname
-  export DB_HOST="$(echo "$DATABASE_URL" | cut -d@ -f2 | cut -d: -f1)"
-  export DB_PORT="$(echo "$DATABASE_URL" | rev | cut -d: -f1 | rev | cut -d/ -f1)"
+  # Beispiel-URL: postgres://user:pw@host:6543/dbname
+  DB_HOST=$(echo "$DATABASE_URL" | cut -d@ -f2 | cut -d: -f1)
+  DB_PORT=$(echo "$DATABASE_URL" | rev | cut -d: -f1 | rev | cut -d/ -f1)
+  export DB_HOST DB_PORT
 fi
 
-DB_HOST="${DB_HOST:-localhost}"
-DB_PORT="${DB_PORT:-5432}"
+: "${DB_HOST:=localhost}"
+: "${DB_PORT:=5432}"
 
-echo "⏳ warte auf PostgreSQL unter $DB_HOST:$DB_PORT …"
+echo "Warte auf PostgreSQL unter $DB_HOST:$DB_PORT …"
 until pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
+  echo "PostgreSQL nicht erreichbar – warte 1 s"
   sleep 1
 done
-echo "✅ PostgreSQL ist bereit"
+echo "PostgreSQL ist bereit – fahre fort …"
 
 # ------------------------------------------------------------
 # 2) Django-Hausarbeiten

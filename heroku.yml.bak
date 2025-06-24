@@ -1,5 +1,7 @@
+# heroku.yml – liegt immer im Repo-Root
 build:
   docker:
-    web: backend.Dockerfile
+    web: backend.Dockerfile   # Pfad relativ zum Repo-Root
+
 run:
-  web: ./backend.entrypoint.sh    
+  web: ./backend.entrypoint.sh   # Start-Befehl im Container
