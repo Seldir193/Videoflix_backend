@@ -1,13 +1,15 @@
 #!/bin/sh
-
 set -e
 
-echo "Warte auf PostgreSQL auf $DB_HOST:$DB_PORT..."
+# Extrahiere Host/Port aus DATABASE_URL, falls DB_HOST nicht gesetzt ist
+if [ -n "$DATABASE_URL" ] && [ -z "$DB_HOST" ]; then
+  export DB_HOST=$(echo "$DATABASE_URL" | awk -F[@:/] '{print $4}')
+  export DB_PORT=$(echo "$DATABASE_URL" | awk -F[@:/] '{print $5}')
+fi
 
-# -q für "quiet" (keine Ausgabe außer Fehlern)
-# Die Schleife läuft, solange pg_isready *nicht* erfolgreich ist (Exit-Code != 0)
-while ! pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
-  echo "PostgreSQL ist nicht erreichbar - schlafe 1 Sekunde"
+# Warten, bis Postgres bereit ist
+until pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
+  echo "PostgreSQL nicht erreichbar – warte 1 s"
   sleep 1
 done
 
@@ -44,4 +46,4 @@ EOF
 python manage.py rqworker default &
 
 #exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:8000
-exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:8000 --workers=3 --worker-class=gevent --timeout=300 --keep-alive=5 --no-sendfile
+exec gunicorn video_backend.wsgi:application --bind 0.0.0.0:${PORT:-8000} --workers=3 --worker-class=gevent --timeout=300 --keep-alive=5 --no-sendfile
