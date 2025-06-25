@@ -24,14 +24,12 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 
 
-
-
 _raw_hosts = os.getenv("ALLOWED_HOSTS")
 if _raw_hosts:
     ALLOWED_HOSTS = _raw_hosts.split(",")
 else:
     ALLOWED_HOSTS = [
-        ".herokuapp.com",       
+        ".herokuapp.com",      # alle Heroku-Subdomains
         "localhost",
         "127.0.0.1",
     ]
@@ -42,7 +40,7 @@ if _raw_csrf:
 else:
     CSRF_TRUSTED_ORIGINS = [
         "https://videoflix.selcuk-kocyigit.de",
-        "https://*.herokuapp.com",
+        "https://*.herokuapp.com",           # jede Heroku-Subdomain
         "http://localhost:4200",
         "http://127.0.0.1:4200",
     ]
