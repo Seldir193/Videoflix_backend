@@ -1,19 +1,14 @@
-# heroku.yml  – im Repo-Root ablegen
+
+
+
+
 build:
   docker:
-    web: backend.Dockerfile        # ← Name bleibt wie bei dir: backend.Dockerfile
+    web: backend.Dockerfile
 
 run:
-  web: ./backend.entrypoint.sh     # Dyno-Start: startet Gunicorn + (optionalen) RQ-Worker
+  web: ./backend.entrypoint.sh
 
-release:                           # läuft EINMAL pro Deploy, VOR dem Dyno-Start
+release:
   command:
     - python manage.py migrate --noinput
-    # legt bei Erst-Deploy (oder nach Löschung) automatisch einen Admin an
-    - |
-      if [ -n "$DJANGO_ADMIN_USER" ] && [ -n "$DJANGO_ADMIN_EMAIL" ]; then
-        python manage.py createsuperuser \
-          --noinput \
-          --username "$DJANGO_ADMIN_USER" \
-          --email    "$DJANGO_ADMIN_EMAIL" || true
-      fi
