@@ -19,17 +19,51 @@ SITE_ID = 1
 DEBUG = os.getenv("DEBUG", "False") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","localhost").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv(
-    "CSRF_TRUSTED_ORIGINS", "http://localhost:4200"
-).split(",")
 
-# === CORS ===
-CORS_ALLOWED_ORIGINS = [
-    "https://videoflix.selcuk-kocyigit.de",
-    "http://localhost:4200",
-    "http://127.0.0.1:4200",
-]
+
+
+
+
+
+
+_raw_hosts = os.getenv("ALLOWED_HOSTS")
+if _raw_hosts:
+    ALLOWED_HOSTS = _raw_hosts.split(",")
+else:
+    ALLOWED_HOSTS = [
+        ".herokuapp.com",       
+        "localhost",
+        "127.0.0.1",
+    ]
+
+_raw_csrf = os.getenv("CSRF_TRUSTED_ORIGINS")
+if _raw_csrf:
+    CSRF_TRUSTED_ORIGINS = _raw_csrf.split(",")
+else:
+    CSRF_TRUSTED_ORIGINS = [
+        "https://videoflix.selcuk-kocyigit.de",
+        "https://*.herokuapp.com",
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+    ]
+
+_raw_cors = os.getenv("CORS_ALLOWED_ORIGINS")
+if _raw_cors:
+    CORS_ALLOWED_ORIGINS = _raw_cors.split(",")
+else:
+    CORS_ALLOWED_ORIGINS = [
+        "https://videoflix.selcuk-kocyigit.de",
+        "http://localhost:4200",
+        "http://127.0.0.1:4200",
+    ]
+
+
+
+
+
+
+
+
 CORS_ALLOW_CREDENTIALS = True
 
 # === AUTH ===
