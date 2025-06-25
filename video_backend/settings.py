@@ -97,7 +97,7 @@ TEMPLATES = [
 
 # === DATABASE ===  ORIGINAL
 
-DATABASE = {
+DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME", "videoflix_db"),
