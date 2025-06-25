@@ -2,6 +2,7 @@ import os
 import datetime
 from datetime import timedelta
 from pathlib import Path
+from re import DEBUG
 
 import django.utils.timezone as _tz
 from dotenv import load_dotenv
@@ -13,7 +14,7 @@ load_dotenv()
 # === BASIC SETTINGS ===
 SITE_ID = 1
 #DEBUG = True
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","localhost").split(",")
@@ -23,6 +24,7 @@ CSRF_TRUSTED_ORIGINS = os.getenv(
 
 # === CORS ===
 CORS_ALLOWED_ORIGINS = [
+    "https://videoflix.selcuk-kocyigit.de",
     "http://localhost:4200",
     "http://127.0.0.1:4200",
 ]
@@ -92,8 +94,10 @@ TEMPLATES = [
     },
 ]
 
-# === DATABASE ===
-DATABASES = {
+
+# === DATABASE ===  ORIGINAL
+
+DATABASE = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
         "NAME": os.getenv("DB_NAME", "videoflix_db"),
@@ -104,11 +108,16 @@ DATABASES = {
     }
 }
 
+REDIS_URL = os.getenv(
+    "REDIS_URL",
+    "redis://redis:6379/1",          # Default für Docker-Compose
+)
+
 # === CACHE / REDIS ===
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": os.getenv("REDIS_LOCATION", "redis://redis:6379/1"),
+        "LOCATION": REDIS_URL,
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "video_backend",
     }
@@ -116,13 +125,11 @@ CACHES = {
 
 RQ_QUEUES = {
     "default": {
-        "HOST": os.getenv("REDIS_HOST", "redis"),
-        "PORT": os.getenv("REDIS_PORT", 6379),
-        "DB": os.getenv("REDIS_DB", 0),
+        "URL": REDIS_URL,             # <-- nur eine Zeile!
         "DEFAULT_TIMEOUT": 900,
-        "REDIS_CLIENT_KWARGS": {},
     }
 }
+
 
 # === PASSWORD VALIDATORS ===
 AUTH_PASSWORD_VALIDATORS = [
@@ -224,6 +231,7 @@ WHITENOISE_MAX_AGE = 86400
 WHITENOISE_USE_FINDERS = True
 WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 WHITENOISE_AUTOREFRESH = True
+WHITENOISE_AUTOREFRESH = DEBUG
 
 # === MISC ===
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
