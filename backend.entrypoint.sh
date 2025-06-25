@@ -2,12 +2,14 @@
 
 set -e
 
-echo "Waiting for Postgres…"
-until pg_isready -d "$DATABASE_URL" -q; do
-  echo "  still not ready – sleeping 1 s"
+# -q für "quiet" (keine Ausgabe außer Fehlern)
+# Die Schleife läuft, solange pg_isready *nicht* erfolgreich ist (Exit-Code != 0)
+while ! pg_isready -h "$DB_HOST" -p "$DB_PORT" -q; do
+  echo "PostgreSQL ist nicht erreichbar - schlafe 1 Sekunde"
   sleep 1
 done
-echo "Postgres is up – continuing."
+
+echo "PostgreSQL ist bereit - fahre fort..."
 
 # Deine originalen Befehle (ohne wait_for_db)
 #python manage.py collectstatic --noinput

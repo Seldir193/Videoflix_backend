@@ -7,6 +7,8 @@ from re import DEBUG
 import django.utils.timezone as _tz
 from dotenv import load_dotenv
 
+import dj_database_url, os
+
 # === BASE ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -14,7 +16,7 @@ load_dotenv()
 # === BASIC SETTINGS ===
 SITE_ID = 1
 #DEBUG = True
-
+DEBUG = os.getenv("DEBUG", "False") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","localhost").split(",")
@@ -95,18 +97,16 @@ TEMPLATES = [
 ]
 
 
-# === DATABASES === 
+
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME", "videoflix_db"),
-        "USER": os.getenv("DB_USER", "real_db_user"),
-        "PASSWORD": os.getenv("DB_PASSWORD", "very_secret_pw"),
-        "HOST": os.getenv("DB_HOST", "db"),
-        "PORT": os.getenv("DB_PORT", 5432),
-    }
+    "default": dj_database_url.config(
+        default=os.getenv("DATABASE_URL"),     # Heroku oder lokal selbst gesetzt
+        conn_max_age=600,                      # DB-Connection-Pooling
+        ssl_require=not os.getenv("DEBUG")=="True",
+    )
 }
+
 
 # === CACHE / REDIS ===
 CACHES = {
