@@ -108,16 +108,11 @@ DATABASE = {
     }
 }
 
-REDIS_URL = os.getenv(
-    "REDIS_URL",
-    "redis://redis:6379/1",          # Default für Docker-Compose
-)
-
 # === CACHE / REDIS ===
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": REDIS_URL,
+        "LOCATION": os.getenv("REDIS_LOCATION", "redis://redis:6379/1"),
         "OPTIONS": {"CLIENT_CLASS": "django_redis.client.DefaultClient"},
         "KEY_PREFIX": "video_backend",
     }
@@ -125,8 +120,11 @@ CACHES = {
 
 RQ_QUEUES = {
     "default": {
-        "URL": REDIS_URL,             # <-- nur eine Zeile!
+        "HOST": os.getenv("REDIS_HOST", "redis"),
+        "PORT": os.getenv("REDIS_PORT", 6379),
+        "DB": os.getenv("REDIS_DB", 0),
         "DEFAULT_TIMEOUT": 900,
+        "REDIS_CLIENT_KWARGS": {},
     }
 }
 
