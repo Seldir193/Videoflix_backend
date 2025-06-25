@@ -95,7 +95,7 @@ TEMPLATES = [
 ]
 
 
-# === DATABASE ===  ORIGINAL
+# === DATABASES === 
 
 DATABASES = {
     "default": {
