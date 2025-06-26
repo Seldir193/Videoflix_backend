@@ -29,7 +29,7 @@ if _raw_hosts:
     ALLOWED_HOSTS = _raw_hosts.split(",")
 else:
     ALLOWED_HOSTS = [
-        "api.videoflix.selcuk-kocyigit.de",
+        #"api.videoflix.selcuk-kocyigit.de",
         #"videoflix-prod.herokuapp.com"
 
 
