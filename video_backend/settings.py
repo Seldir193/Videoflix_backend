@@ -141,13 +141,14 @@ TEMPLATES = [
 ]
 
 
-
+DB_SSL = os.getenv("DB_SSL", "False") == "True"
 
 DATABASES = {
     "default": dj_database_url.config(
         default=os.getenv("DATABASE_URL"),     # Heroku oder lokal selbst gesetzt
         conn_max_age=600,                      # DB-Connection-Pooling
-        ssl_require=not os.getenv("DEBUG")=="True",
+        #ssl_require=not os.getenv("DEBUG")=="True",
+         ssl_require = DB_SSL,
     )
 }
 
@@ -206,7 +207,7 @@ PASSWORD_RESET_CONFIRM_URL = f"{FRONTEND_PROTOCOL}://{FRONTEND_DOMAIN}/auth/rese
 # === DJOSER CONFIG ===
 DJOSER = {
     "LOGIN_FIELD": "email",
-    "USER_CREATE_PASSWORD_RETYPE": True,
+    "USER_CREATE_PASSWORD_RETYPE": False,
     "SEND_ACTIVATION_EMAIL": True,
     "SEND_PASSWORD_RESET_EMAIL": True,
     "EMAIL_FRONTEND_PROTOCOL": FRONTEND_PROTOCOL,
