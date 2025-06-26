@@ -34,7 +34,7 @@ else:
 
 
         ".herokuapp.com",      # alle Heroku-Subdomains
-        #"videoflix.selcuk-kocyigit.de",
+        "videoflix.selcuk-kocyigit.de",
 
 
         "localhost",
