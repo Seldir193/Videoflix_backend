@@ -29,7 +29,14 @@ if _raw_hosts:
     ALLOWED_HOSTS = _raw_hosts.split(",")
 else:
     ALLOWED_HOSTS = [
+        "api.videoflix.selcuk-kocyigit.de",
+        "videoflix-prod.herokuapp.com"
+
+
         ".herokuapp.com",      # alle Heroku-Subdomains
+        "videoflix.selcuk-kocyigit.de",
+
+
         "localhost",
         "127.0.0.1",
     ]
@@ -40,6 +47,8 @@ if _raw_csrf:
 else:
     CSRF_TRUSTED_ORIGINS = [
         "https://videoflix.selcuk-kocyigit.de",
+         "https://api.videoflix.selcuk-kocyigit.de",
+
         "https://*.herokuapp.com",           # jede Heroku-Subdomain
         "http://localhost:4200",
         "http://127.0.0.1:4200",
@@ -50,9 +59,12 @@ if _raw_cors:
     CORS_ALLOWED_ORIGINS = _raw_cors.split(",")
 else:
     CORS_ALLOWED_ORIGINS = [
+        "https://api.videoflix.selcuk-kocyigit.de",
+
         "https://videoflix.selcuk-kocyigit.de",
         "http://localhost:4200",
         "http://127.0.0.1:4200",
+
     ]
 
 
