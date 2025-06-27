@@ -32,6 +32,13 @@ jobs:
 
       # Django liest DATABASE_URL – darum reicht 1 Variable:
       DATABASE_URL: postgres://test:test@localhost:5432/videoflix_ci
+     
+      DB_NAME: videoflix_ci
+      DB_USER: test
+      DB_PASSWORD: test
+      DB_HOST: localhost        # Service-Hostname
+      DB_PORT: "5432"
+
       DJANGO_SETTINGS_MODULE: video_backend.settings
 
     strategy:
