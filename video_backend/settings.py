@@ -7,8 +7,6 @@ from re import DEBUG
 import django.utils.timezone as _tz
 from dotenv import load_dotenv
 
-import dj_database_url, os
-
 # === BASE ===
 BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv()
@@ -19,60 +17,17 @@ SITE_ID = 1
 DEBUG = os.getenv("DEBUG", "False") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY")
 
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS","localhost").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv(
+    "CSRF_TRUSTED_ORIGINS", "http://localhost:4200"
+).split(",")
 
-
-
-
-
-_raw_hosts = os.getenv("ALLOWED_HOSTS")
-if _raw_hosts:
-    ALLOWED_HOSTS = _raw_hosts.split(",")
-else:
-    ALLOWED_HOSTS = [
-        #"api.videoflix.selcuk-kocyigit.de",
-        #"videoflix-prod.herokuapp.com"
-
-
-        ".herokuapp.com",      # alle Heroku-Subdomains
-        #"videoflix.selcuk-kocyigit.de",
-
-
-        "localhost",
-        "127.0.0.1",
-    ]
-
-_raw_csrf = os.getenv("CSRF_TRUSTED_ORIGINS")
-if _raw_csrf:
-    CSRF_TRUSTED_ORIGINS = _raw_csrf.split(",")
-else:
-    CSRF_TRUSTED_ORIGINS = [
-        "https://videoflix.selcuk-kocyigit.de",
-        # "https://api.videoflix.selcuk-kocyigit.de",
-
-        "https://*.herokuapp.com",           # jede Heroku-Subdomain
-        "http://localhost:4200",
-        "http://127.0.0.1:4200",
-    ]
-
-_raw_cors = os.getenv("CORS_ALLOWED_ORIGINS")
-if _raw_cors:
-    CORS_ALLOWED_ORIGINS = _raw_cors.split(",")
-else:
-    CORS_ALLOWED_ORIGINS = [
-        #"https://api.videoflix.selcuk-kocyigit.de",
-
-        "https://videoflix.selcuk-kocyigit.de",
-        "http://localhost:4200",
-        "http://127.0.0.1:4200",
-
-    ]
-
-
-
-
-
-
-
+# === CORS ===
+CORS_ALLOWED_ORIGINS = [
+    "https://videoflix.selcuk-kocyigit.de",
+    "http://localhost:4200",
+    "http://127.0.0.1:4200",
+]
 
 CORS_ALLOW_CREDENTIALS = True
 
@@ -140,18 +95,17 @@ TEMPLATES = [
     },
 ]
 
-
-DB_SSL = os.getenv("DB_SSL", "False") == "True"
-
+# === DATABASES === 
 DATABASES = {
-    "default": dj_database_url.config(
-        default=os.getenv("DATABASE_URL"),     # Heroku oder lokal selbst gesetzt
-        conn_max_age=600,                      # DB-Connection-Pooling
-        #ssl_require=not os.getenv("DEBUG")=="True",
-         ssl_require = DB_SSL,
-    )
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME", "videoflix_db"),
+        "USER": os.getenv("DB_USER", "real_db_user"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "very_secret_pw"),
+        "HOST": os.getenv("DB_HOST", "db"),
+        "PORT": os.getenv("DB_PORT", 5432),
+    }
 }
-
 
 # === CACHE / REDIS ===
 CACHES = {
@@ -172,7 +126,6 @@ RQ_QUEUES = {
         "REDIS_CLIENT_KWARGS": {},
     }
 }
-
 
 # === PASSWORD VALIDATORS ===
 AUTH_PASSWORD_VALIDATORS = [
