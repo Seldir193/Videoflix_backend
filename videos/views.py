@@ -90,5 +90,5 @@ class TrailerList(ListAPIView):
     """Read‑only list of short trailers (≤ 240 s)."""
 
     serializer_class = VideoSerializer
-    queryset = Video.objects.filter(is_trailer=True, duration__lte=240)
+    queryset = Video.objects.filter(is_trailer=True, duration__lte=600)
     permission_classes = [IsAuthenticated]
