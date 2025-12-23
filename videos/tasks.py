@@ -76,7 +76,10 @@ def create_variants(video_id: int) -> None:
     ]
     vid.save(update_fields=["source_url", "source_variants"])
 
-    enqueue(extract_thumb, video_id, str(src))
+    #enqueue(extract_thumb, video_id, str(src))
+    preferred_abs = Path(settings.MEDIA_ROOT, variants[preferred])
+    enqueue(extract_thumb, video_id, str(preferred_abs))
+
 
 
 def extract_thumb(video_id: int, src_path: str) -> None:
@@ -101,14 +104,18 @@ def extract_thumb(video_id: int, src_path: str) -> None:
 
     if not hero.exists():
         run([
-            FFMPEG, "-y", "-ss", str(ts), "-i", src_path,
+          #  FFMPEG, "-y", "-ss", str(ts), "-i", src_path,
+            FFMPEG, "-y", "-i", src_path, "-ss", str(ts),
+
             "-vframes", "1", "-vf", "scale=1280:-1",
             str(hero),
         ])
 
     if not thumb.exists():
         run([
-            FFMPEG, "-y", "-ss", str(ts), "-i", src_path,
+           # FFMPEG, "-y", "-ss", str(ts), "-i", src_path,
+            FFMPEG, "-y", "-i", src_path, "-ss", str(ts),
+
             "-vframes", "1", "-vf", "scale=320:-1",
             str(thumb),
         ])
