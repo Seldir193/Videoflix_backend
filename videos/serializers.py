@@ -60,6 +60,11 @@ class VideoSerializer(serializers.ModelSerializer):
             or getattr(instance, "description_en", None)
             or instance.description
         )
+        if request:
+            for key in ("thumb", "hero_frame", "source_url"):
+                val = rep.get(key)
+                if val and not str(val).startswith(("http://", "https://")):
+                    rep[key] = request.build_absolute_uri(settings.MEDIA_URL + val)
         return rep
 
     # ------------------------------------------------------------------

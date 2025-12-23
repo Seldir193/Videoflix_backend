@@ -101,7 +101,7 @@ def extract_thumb(video_id: int, src_path: str) -> None:
         src_path,
     ]))
     #ts = max(dur * 0.25, 1)
-ts = min(max(10.0, 1.0), max(dur - 1.0, 1.0))
+    ts = min(max(10.0, 1.0), max(dur - 1.0, 1.0))
 
     if not hero.exists():
         run([
